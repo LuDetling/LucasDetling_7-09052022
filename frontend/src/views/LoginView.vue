@@ -25,7 +25,7 @@
         <label for="password">Mot de passe :</label>
         <input v-model="password" type="text" id="password" />
       </div>
-      <button v-if="mode === 'login'" @click="test()">Se connecter</button>
+      <button v-if="mode === 'login'" @click="login()">Se connecter</button>
       <button
         v-else
         @click="createAccount()"
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   name: "LoginView",
   data: () => {
@@ -73,11 +75,18 @@ export default {
       this.mode = "create";
     },
     createAccount() {
-      console.log(this.email);
+      this.$store.dispatch("createAccount", {
+        email: this.email,
+        password: this.password,
+      });
     },
-    test() {
-      console.log("test de visions");
+    login() {
+      this.$store.dispatch("login", {
+        email: this.email,
+        password: this.password,
+      });
     },
+    ...mapActions(["showUsers"]),
   },
 };
 </script>
@@ -100,7 +109,6 @@ export default {
   }
   .button-disabled {
     pointer-events: none;
-
   }
 }
 </style>

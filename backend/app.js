@@ -2,6 +2,8 @@ const express = require('express');
 // const path = require('path');
 const { PrismaClient } = require('@prisma/client')
 
+const userRoutes = require('./routes/user');
+
 const prisma = new PrismaClient()
 const app = express();
 
@@ -14,18 +16,8 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-
 // npx prisma studio 
 
-app.get('/users', async (req, res) => {
-    try {
-        const users = await prisma.user.findMany();
-        res.status(200).json({ users });
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({ error });
-    }
-})
-
+app.use('/auth', userRoutes);
 
 module.exports = app;
