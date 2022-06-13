@@ -20,10 +20,12 @@
       <div>
         <label for="email">Email :</label>
         <input v-model="email" type="text" id="email" />
+        <div v-if="status === 'invalid_email'">Email déjà utilisé</div>
       </div>
       <div>
         <label for="password">Mot de passe :</label>
         <input v-model="password" type="text" id="password" />
+        <div v-if="status === 'password_invalid'">Mauvais mot de passe</div>
       </div>
       <button v-if="mode === 'login'" @click="login()">Se connecter</button>
       <button
@@ -38,7 +40,8 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+// fonction qui permet de voir si l'email n'a pas déja été utilisé
+import { mapState } from "vuex";
 
 export default {
   name: "LoginView",
@@ -66,6 +69,7 @@ export default {
         }
       }
     },
+    ...mapState(["status"]),
   },
   methods: {
     swithToLogin() {
@@ -86,7 +90,6 @@ export default {
         password: this.password,
       });
     },
-    ...mapActions(["showUsers"]),
   },
 };
 </script>

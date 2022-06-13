@@ -1,11 +1,37 @@
 <template>
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> | 
-    <router-link to="/login">Se connecter</router-link>
+    <router-link to="/">Accueil</router-link> |
+    <router-link to="/about">A propos</router-link> |
+    <router-link v-if="user.userId === -1" to="/login"
+      >Se connecter</router-link
+    >
+    <button v-else @click="disconnected">Se déconnecter</button>
+    <!-- <button v-if="email != emailStorage">test</button> -->
   </nav>
-  <router-view/>
+  <router-view />
 </template>
+
+<script>
+import { mapState } from "vuex";
+
+// const localUser = JSON.parse(localStorage.getItem("user"));
+const localUser = JSON.parse(localStorage.getItem("user"));
+
+export default {
+  data: () => {
+    return {
+      localUser: localUser,
+    };
+  },
+  computed: {
+    ...mapState(["user"]),
+    disconnected() {
+      localStorage.removeItem("user");
+      location.href = "";
+    },
+  },
+};
+</script>
 
 <style lang="scss">
 #app {

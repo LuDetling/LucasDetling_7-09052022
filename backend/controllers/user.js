@@ -70,7 +70,6 @@ exports.login = async (req, res, next) => {
           }
         ),
       });
-      // RECUP LE TOKEN DE CONNEXION POUR LOCALSTORAGE
     } catch (error) {
       res.status(500).json({
         error,
