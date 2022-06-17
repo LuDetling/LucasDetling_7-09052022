@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const prisma = new PrismaClient();
-const app = express();
 
 exports.showUsers = async (req, res) => {
   try {
@@ -22,16 +21,10 @@ exports.addUser = async (req, res, next) => {
       email: req.body.email,
       password: hash,
     };
-    try {
-      await prisma.user.create({ data: user });
-      res.status(201).json({
-        message: "Utilisateur créé !",
-      });
-    } catch (error) {
-      res.status(500).json({
-        error,
-      });
-    }
+    await prisma.user.create({ data: user });
+    res.status(201).json({
+      message: "Utilisateur créé !",
+    });
   } catch (error) {
     res.status(500).json({
       error,

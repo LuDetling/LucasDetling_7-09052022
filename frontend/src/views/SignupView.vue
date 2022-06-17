@@ -1,33 +1,33 @@
 <template>
-  <div class="login-create">
-    <h1>Se connecter</h1>
+  <div>
+    <h1>S'inscrire</h1>
     <p>
-      Vous n'avez pas de compte ? veuillez vous
-      <a class="signup" @click="letsSignup">inscrire</a>
+      Vous avez déjà un compte ? veuillez vous
+      <a class="login" @click="letsLogin">connecter</a>
     </p>
     <div class="formulaire">
       <InputForm
-        label="Email : "
         name="email"
+        label="Email : "
         type="text"
         :error="errorEmail"
         @showInput="sendEmail"
       />
       <InputForm
-        label="Mot de passe : "
         name="password"
+        label="Mot de passe : "
         type="password"
         :error="errorPassword"
         @showInput="sendPassword"
       />
     </div>
-    <button v-if="status === ''" @click="validatedFields">Se connecter</button>
+    <button v-if="status === ''" @click="validatedFields">S'inscrire</button>
     <button v-else-if="status === 'loading'" @click="validatedFields">
-      Connexion en cours...
+      Inscription en cours...
     </button>
     <div v-else>
-      <button @click="validatedFields">Se connecter</button>
-      <div>Email et/ou mot de passe inccorect</div>
+      <button @click="validatedFields">Inscription</button>
+      <div>Email déjà utilisé</div>
     </div>
   </div>
 </template>
@@ -51,9 +51,6 @@ export default {
       errorPassword: "",
     };
   },
-  computed: {
-    ...mapState(["status"]),
-  },
   methods: {
     sendEmail(payload) {
       this.email = payload.value;
@@ -61,14 +58,14 @@ export default {
     sendPassword(payload) {
       this.password = payload.value;
     },
-    login() {
-      this.$store.dispatch("login", {
+    createAccount() {
+      this.$store.dispatch("createAccount", {
         email: this.email,
         password: this.password,
       });
     },
-    letsSignup() {
-      this.$router.push("/signup");
+    letsLogin() {
+      this.$router.push("/login");
     },
     validatedFields() {
       if (
@@ -88,16 +85,19 @@ export default {
       } else {
         this.errorEmail = "";
         this.errorPassword = "";
-        this.login();
+        this.createAccount();
         return true;
       }
     },
+  },
+  computed: {
+    ...mapState(["status"]),
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.signup {
+.login {
   text-decoration: underline;
   cursor: pointer;
 }

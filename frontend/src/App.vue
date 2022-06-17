@@ -1,11 +1,18 @@
 <template>
   <nav>
-    <router-link to="/">Accueil</router-link> |
-    <router-link to="/about">A propos</router-link> |
-    <router-link v-if="user.userId === -1" to="/login"
-      >Se connecter</router-link
+    <router-link to="/" class="accueil">Accueil</router-link>
+    <router-link v-if="status === 'loged'" to="/newPost"
+      >Nouveau post</router-link
     >
-    <button v-else @click="disconnected">Se déconnecter</button>
+    <div class="log">
+      <router-link v-if="user.userId === -1 && status !== 'loged'" to="/login"
+        >Se connecter</router-link
+      >
+      <button v-else @click="lougout" class="logout">Se déconnecter</button>
+      <router-link v-if="status !== 'loged'" to="/signup"
+        >S'inscrire</router-link
+      >
+    </div>
     <!-- <button v-if="email != emailStorage">test</button> -->
   </nav>
   <router-view />
@@ -14,7 +21,6 @@
 <script>
 import { mapState } from "vuex";
 
-// const localUser = JSON.parse(localStorage.getItem("user"));
 const localUser = JSON.parse(localStorage.getItem("user"));
 
 export default {
@@ -23,17 +29,20 @@ export default {
       localUser: localUser,
     };
   },
-  computed: {
-    ...mapState(["user"]),
-    disconnected() {
-      localStorage.removeItem("user");
-      location.href = "";
+  methods: {
+    lougout() {
+      this.$store.commit("logout");
+      this.$router.push("/login");
     },
+  },
+  computed: {
+    ...mapState(["user", "status"]),
   },
 };
 </script>
 
 <style lang="scss">
+@import "./assets/styles/styles.scss";
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -43,14 +52,47 @@ export default {
 }
 
 nav {
-  padding: 30px;
-
+  padding: 15px 30px;
+  background-color: $blue;
+  border-bottom: $grey solid 1px;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   a {
     font-weight: bold;
-    color: #2c3e50;
-
+    color: $salmon;
+    text-decoration: none;
+    transition: 0.3s;
+    &:hover {
+      color: $green;
+    }
     &.router-link-exact-active {
-      color: #42b983;
+      color: $green;
+      text-decoration: underline;
+    }
+  }
+  .log {
+    a {
+      display: block;
+      text-align: start;
+      &:first-child {
+        margin-bottom: 1rem;
+      }
+    }
+    .logout {
+      background: none;
+      color: $salmon;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-family: "Avenir", Arial, Helvetica, sans-serif;
+      font-weight: 600;
+      padding: 0;
+      transition: 0.3s;
+      &:hover {
+        color: $green;
+      }
     }
   }
 }

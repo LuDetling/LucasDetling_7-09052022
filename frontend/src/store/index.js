@@ -1,12 +1,14 @@
 import { createStore } from "vuex";
+import router from "../router/index";
 
 let user = JSON.parse(localStorage.getItem("user"));
+const defaultUser = {
+  userId: -1,
+  token: "",
+};
 
 if (!user) {
-  user = {
-    token: "",
-    userId: -1,
-  };
+  user = defaultUser;
 }
 
 export default createStore({
@@ -15,10 +17,25 @@ export default createStore({
     user: user,
   },
   getters: {},
-  mutations: {},
+  mutations: {
+    setStatus(state, status) {
+      state.status = status;
+    },
+    logout(state) {
+      localStorage.removeItem("user");
+      state.user = defaultUser;
+      state.status = "";
+    },
+    logUser(state, user) {
+      state.user = user;
+      router.push("/");
+    },
+  },
   actions: {
-    // CREATE ACCOUNT
-    async createAccount({ context, state }, userInfos) {
+    // <--------------- CREATE ACCOUNT --------------->
+
+    async createAccount({ commit }, userInfos) {
+      commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/auth/signup", {
         method: "POST",
         headers: {
@@ -34,14 +51,18 @@ export default createStore({
             ": " +
             response.statusText
         );
-        state.status = "invalid_email";
+        commit("setStatus", "error_create");
+
         return;
       }
-      state.status = "";
-      location.href = "/#/login";
+      commit("setStatus", "");
+      router.push("/");
     },
-    // LOGIN
-    async login({ context, state }, userInfos) {
+
+    // <--------------- LOGIN --------------->
+
+    async login({ commit }, userInfos) {
+      commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
@@ -57,14 +78,15 @@ export default createStore({
             ": " +
             response.statusText
         );
-        state.status = "password_invalid";
+        commit("setStatus", "error_loading");
         return;
       }
-      state.status = "";
-      const user = await response.json();
-      localStorage.setItem("user", JSON.stringify(user));
-      this.user = JSON.parse(localStorage.getItem("user"));
-      location.href = "";
+      // si c'est bon
+      const data = await response.json();
+      localStorage.setItem("user", JSON.stringify(data));
+      const user = JSON.parse(localStorage.getItem("user"));
+      commit("logUser", user);
+      commit("setStatus", "loged");
     },
   },
   modules: {},
