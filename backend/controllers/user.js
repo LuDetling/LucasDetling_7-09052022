@@ -44,30 +44,24 @@ exports.login = async (req, res, next) => {
         error: "Utilisateur non trouvé !",
       });
     }
-    try {
-      const valid = await bcrypt.compare(req.body.password, user.password);
-      if (!valid) {
-        return res.status(401).json({
-          error: "Mot de passe incorrect !",
-        });
-      }
-      const response = res.status(200).json({
-        userId: user.id,
-        token: jwt.sign(
-          {
-            userId: user.id,
-          },
-          "RANDOM_TOKEN_SECRET",
-          {
-            expiresIn: "24h",
-          }
-        ),
-      });
-    } catch (error) {
-      res.status(500).json({
-        error,
+    const valid = await bcrypt.compare(req.body.password, user.password);
+    if (!valid) {
+      return res.status(401).json({
+        error: "Mot de passe incorrect !",
       });
     }
+    const response = res.status(200).json({
+      userId: user.id,
+      token: jwt.sign(
+        {
+          userId: user.id,
+        },
+        "RANDOM_TOKEN_SECRET",
+        {
+          expiresIn: "24h",
+        }
+      ),
+    });
   } catch (error) {
     res.status(500).json({
       error,

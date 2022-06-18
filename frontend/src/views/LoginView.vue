@@ -6,23 +6,12 @@
       <a class="signup" @click="letsSignup">inscrire</a>
     </p>
     <div class="formulaire">
-      <InputForm
-        label="Email : "
-        name="email"
-        type="text"
-        :error="errorEmail"
-        @showInput="sendEmail"
-      />
-      <InputForm
-        label="Mot de passe : "
-        name="password"
-        type="password"
-        :error="errorPassword"
-        @showInput="sendPassword"
-      />
+      <InputForm label="Email : " name="email" type="text" :error="errorEmail" @showInput="sendEmail" />
+      <InputForm label="Mot de passe : " name="password" type="password" :error="errorPassword"
+        @showInput="sendPassword" />
     </div>
     <button v-if="status === ''" @click="validatedFields">Se connecter</button>
-    <button v-else-if="status === 'loading'" @click="validatedFields">
+    <button v-else-if="status === 'loading'">
       Connexion en cours...
     </button>
     <div v-else>
@@ -35,11 +24,13 @@
 <script>
 import { mapState } from "vuex";
 import InputForm from "../components/InputForm.vue";
+import router from "@/router";
 
 const regexEmail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
 export default {
+  name: "login",
   components: {
     InputForm,
   },
@@ -51,8 +42,13 @@ export default {
       errorPassword: "",
     };
   },
+  mounted() {
+    if (this.user.userId != -1) {
+      router.push("/");
+    }
+  },
   computed: {
-    ...mapState(["status"]),
+    ...mapState(["status", "user"]),
   },
   methods: {
     sendEmail(payload) {
@@ -97,8 +93,39 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.signup {
-  text-decoration: underline;
-  cursor: pointer;
+@import "../assets/styles/styles.scss";
+
+.login-create {
+  color: white;
+
+  >h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  >p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+
+    .signup {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+  }
+
+  button {
+    background-color: white;
+    color: $darkblue;
+    font-size: 1rem;
+    padding: .5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+    &:focus-visible,
+    &:hover {
+      outline: 3px solid $green;
+    }
+  }
 }
 </style>

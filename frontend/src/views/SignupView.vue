@@ -1,28 +1,17 @@
 <template>
-  <div>
+  <div class="login-create">
     <h1>S'inscrire</h1>
     <p>
       Vous avez déjà un compte ? veuillez vous
       <a class="login" @click="letsLogin">connecter</a>
     </p>
     <div class="formulaire">
-      <InputForm
-        name="email"
-        label="Email : "
-        type="text"
-        :error="errorEmail"
-        @showInput="sendEmail"
-      />
-      <InputForm
-        name="password"
-        label="Mot de passe : "
-        type="password"
-        :error="errorPassword"
-        @showInput="sendPassword"
-      />
+      <InputForm name="email" label="Email : " type="text" :error="errorEmail" @showInput="sendEmail" />
+      <InputForm name="password" label="Mot de passe : " type="password" :error="errorPassword"
+        @showInput="sendPassword" />
     </div>
     <button v-if="status === ''" @click="validatedFields">S'inscrire</button>
-    <button v-else-if="status === 'loading'" @click="validatedFields">
+    <button v-else-if="status === 'loading'">
       Inscription en cours...
     </button>
     <div v-else>
@@ -35,11 +24,13 @@
 <script>
 import { mapState } from "vuex";
 import InputForm from "../components/InputForm.vue";
+import router from "@/router";
 
 const regexEmail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
 export default {
+  name: "signup",
   components: {
     InputForm,
   },
@@ -50,6 +41,11 @@ export default {
       errorEmail: "",
       errorPassword: "",
     };
+  },
+  mounted() {
+    if (this.user.userId != -1) {
+      router.push("/");
+    }
   },
   methods: {
     sendEmail(payload) {
@@ -91,14 +87,45 @@ export default {
     },
   },
   computed: {
-    ...mapState(["status"]),
+    ...mapState(["status", "user"]),
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.login {
-  text-decoration: underline;
-  cursor: pointer;
+@import "../assets/styles/styles.scss";
+.login-create {
+  color: white;
+
+  >h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  >p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+
+    .login {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+  }
+
+  button {
+    background-color: white;
+    color: $darkblue;
+    font-size: 1rem;
+    padding: .5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+
+    &:focus-visible,
+    &:hover {
+      outline: 3px solid $green;
+    }
+  }
 }
 </style>

@@ -33,8 +33,7 @@ export default createStore({
   },
   actions: {
     // <--------------- CREATE ACCOUNT --------------->
-
-    async createAccount({ commit }, userInfos) {
+    async createAccount({ commit, dispatch }, userInfos) {
       commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/auth/signup", {
         method: "POST",
@@ -47,21 +46,21 @@ export default createStore({
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-            response.status +
-            ": " +
-            response.statusText
+          response.status +
+          ": " +
+          response.statusText
         );
         commit("setStatus", "error_create");
 
         return;
       }
-      commit("setStatus", "");
-      router.push("/");
+      dispatch("login", userInfos);
     },
 
     // <--------------- LOGIN --------------->
 
     async login({ commit }, userInfos) {
+
       commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
@@ -74,9 +73,9 @@ export default createStore({
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-            response.status +
-            ": " +
-            response.statusText
+          response.status +
+          ": " +
+          response.statusText
         );
         commit("setStatus", "error_loading");
         return;
@@ -86,7 +85,6 @@ export default createStore({
       localStorage.setItem("user", JSON.stringify(data));
       const user = JSON.parse(localStorage.getItem("user"));
       commit("logUser", user);
-      commit("setStatus", "loged");
     },
   },
   modules: {},

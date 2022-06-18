@@ -1,8 +1,8 @@
 <template>
-  <div class="formulaire">
+  <div class="input-form">
     <label :for="name">{{ label }}</label>
     <input :type="type" :id="name" v-model="value" @keyup="sendValue" />
-    <div>{{ error }}</div>
+    <div class="error">{{ error }}</div>
   </div>
 </template>
 
@@ -32,23 +32,41 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.formulaire {
+@import "../assets/styles/styles.scss";
+
+.input-form {
   width: fit-content;
   margin: auto;
   text-align: justify;
-  > div {
-    margin-bottom: 1rem;
-    label,
-    input {
-      display: block;
+  margin-bottom: 1rem;
+
+  label,
+  input {
+    display: block;
+  }
+
+  label {
+    font-size: 1.2rem;
+    margin-bottom: .5rem;
+  }
+
+  input {
+    width: 300px;
+    font-size: 1rem;
+    height: 2rem;
+    padding: .5rem;
+    border: none;
+    border-radius: 20px;
+
+    &:focus-visible, &:hover {
+      outline: 3px solid $green;
     }
   }
-  button {
-    display: block;
-    margin: auto;
-  }
-  .button-disabled {
-    pointer-events: none;
+
+  .error {
+    margin-top: .5rem;
+    font-size: 1rem;
+    color: red;
   }
 }
 </style>
