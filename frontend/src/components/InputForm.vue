@@ -14,7 +14,6 @@ export default {
     label: String,
     type: String,
     error: String,
-    input: String,
   },
   data: () => {
     return {

@@ -1,18 +1,8 @@
-const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const prisma = new PrismaClient();
-
-exports.showUsers = async (req, res) => {
-  try {
-    const users = await prisma.user.findMany();
-    res.status(200).json({ users });
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-};
 
 exports.addUser = async (req, res, next) => {
   try {

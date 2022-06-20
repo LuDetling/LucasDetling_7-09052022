@@ -1,13 +1,18 @@
 <template>
   <nav>
     <router-link to="/" class="accueil">Accueil</router-link>
-    <router-link v-if="status === 'loged'" to="/newPost">Nouveau post</router-link>
+    <router-link v-if="user.userId != -1" to="/newPost"
+      >Nouveau post</router-link
+    >
     <div class="log">
-      <router-link v-if="user.userId === -1" to="/login">Se connecter</router-link>
+      <router-link v-if="user.userId === -1" to="/login"
+        >Se connecter</router-link
+      >
       <button v-else @click="lougout" class="logout">Se déconnecter</button>
-      <router-link v-if="user.userId === -1" to="/signup">S'inscrire</router-link>
+      <router-link v-if="user.userId === -1" to="/signup"
+        >S'inscrire</router-link
+      >
     </div>
-    <!-- <button v-if="email != emailStorage">test</button> -->
   </nav>
   <router-view />
 </template>
@@ -36,7 +41,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 @import "./assets/styles/styles.scss";
 
 #app {
@@ -78,7 +82,7 @@ nav {
       text-align: start;
 
       &:first-child {
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
       }
     }
 

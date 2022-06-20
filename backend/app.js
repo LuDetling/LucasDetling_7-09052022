@@ -1,10 +1,8 @@
 const express = require('express');
-// const path = require('path');
-const { PrismaClient } = require('@prisma/client')
 
 const userRoutes = require('./routes/user');
+const postRoutes = require('./routes/post');
 
-const prisma = new PrismaClient()
 const app = express();
 
 app.use((req, res, next) => {
@@ -19,5 +17,6 @@ app.use(express.json());
 // npx prisma studio 
 
 app.use('/auth', userRoutes);
+app.use("/posts", postRoutes);
 
 module.exports = app;
