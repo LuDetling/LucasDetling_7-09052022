@@ -2,7 +2,6 @@ import { createStore } from "vuex";
 import router from "../router/index";
 
 let user = JSON.parse(localStorage.getItem("user"));
-
 const defaultUser = {
   userId: -1,
   token: "",
@@ -10,53 +9,49 @@ const defaultUser = {
 
 if (!user) {
   user = defaultUser;
-  status = "disconnect"
 }
 
-export default createStore({
+const modulePost = {
   state: {
-    status: status,
     user: user,
-  },
-  getters: {},
-  mutations: {
-    setStatus(state, status) {
-      state.status = status;
-    },
-    logout(state) {
-      localStorage.removeItem("user");
-      state.user = defaultUser;
-      state.status = "";
-    },
-    logUser(state, user) {
-      state.user = user;
-      router.push("/");
-    },
   },
   actions: {
     // <--------------- CREATE POST --------------->
-    async createPost({ commit }, postInfos) {
+    async createPost({ commit, state }, postInfos) {
+      const formData = new FormData();
+      formData.append("user", postInfos.userId);
+      formData.append("title", postInfos.title);
+      formData.append("content", postInfos.content);
+      formData.append("image", postInfos.image);
+
+      const { token } = state.user;
       commit("setStatus", "loading");
-      const response = await fetch("http://localhost:3001/posts/newpost", {
+      const response = await fetch("http://localhost:3001/posts", {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
+          // "Content-Type": "application/json",
+          authorization: `BEARER ${token}`,
         },
-        body: JSON.stringify(postInfos),
+        body: formData,
       });
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
         commit("setStatus", "error_create");
         return;
       }
       router.push("/");
     },
+  },
+};
+
+const moduleUser = {
+  actions: {
     // <--------------- CREATE ACCOUNT --------------->
     async createAccount({ commit, dispatch }, userInfos) {
       commit("setStatus", "loading");
@@ -71,9 +66,9 @@ export default createStore({
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
         commit("setStatus", "error_create");
 
@@ -85,7 +80,6 @@ export default createStore({
     // <--------------- LOGIN --------------->
 
     async login({ commit }, userInfos) {
-
       commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
@@ -98,9 +92,9 @@ export default createStore({
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
         commit("setStatus", "error_loading");
         return;
@@ -112,5 +106,29 @@ export default createStore({
       commit("setStatus", "loged");
     },
   },
-  modules: {},
+};
+
+export default createStore({
+  modules: {
+    moduleUser: moduleUser,
+    modulePost: modulePost,
+  },
+  state: {
+    status: "",
+    user: user,
+  },
+  mutations: {
+    setStatus(state, status) {
+      state.status = status;
+    },
+    logUser(state, user) {
+      state.user = user;
+      router.push("/");
+    },
+    logout(state) {
+      localStorage.removeItem("user");
+      state.user = defaultUser;
+      state.status = "";
+    },
+  },
 });

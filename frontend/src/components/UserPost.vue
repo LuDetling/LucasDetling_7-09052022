@@ -1,27 +1,27 @@
 <template>
-  <div v-for="post of posts" class="card-post-like">
-    <div class="like-dislike">
-      <button>like</button>
-      <button>dislike</button>
-    </div>
-    <div class="card-post">
-      <img src="../assets/logo.png" alt="" />
-      <div class="post">
-        <h1>{{ post.title }}</h1>
-        <p>Paragraph of post</p>
+  <div class="content-posts">
+    <div v-for="post of posts" :key="post.id" class="card-post-like">
+      <div class="like-dislike">
+        <button>{{ post.likes }}</button>
+        <button>{{ post.dislikes }}</button>
+      </div>
+      <div class="card-post">
+        <img :src="post.imageUrl" alt="Image du post" />
+        <div class="post">
+          <h1>{{ post.title }}</h1>
+          <p>{{ post.content }}</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
   name: "userPost",
   data: () => {
     return {
-      posts: [{ title: "", content: "" }],
+      posts: [],
     };
   },
   async mounted() {
@@ -35,9 +35,12 @@ export default {
       );
     }
     const data = await response.json();
-    const posts = data.posts;
+    const allPosts = data.posts;
     // for sur posts
-    this.posts.title = posts.title;
+    for (let i = 0; i < allPosts.length; i++) {
+      this.posts.push(allPosts[i]);
+      console.log(this.posts[i]);
+    }
   },
 };
 </script>
@@ -49,6 +52,7 @@ export default {
   width: 600px;
   padding: 0.5rem;
   background: #2c3e50;
+  margin-bottom: 2rem;
   .like-dislike {
     border-right: 1px solid white;
     padding-right: 0.5rem;

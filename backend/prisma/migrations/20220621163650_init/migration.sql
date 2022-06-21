@@ -16,8 +16,8 @@ CREATE TABLE `Post` (
     `updatedAt` DATETIME(3) NOT NULL,
     `published` BOOLEAN NOT NULL DEFAULT false,
     `title` VARCHAR(255) NOT NULL,
-    `likes` INTEGER NOT NULL,
-    `dislikes` INTEGER NOT NULL,
+    `likes` INTEGER NOT NULL DEFAULT 0,
+    `dislikes` INTEGER NOT NULL DEFAULT 0,
     `userId` INTEGER NULL,
 
     PRIMARY KEY (`id`)

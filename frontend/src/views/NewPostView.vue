@@ -1,5 +1,5 @@
 <template>
-  <div class="new-post">
+  <form class="new-post" enctype="multipart/form-data" @submit="checkForm">
     <InputForm name="title" label="Titre :" type="text" @showInput="sendTile" />
     <label for="content">Contenu :</label>
     <textarea
@@ -9,8 +9,9 @@
       rows="10"
       v-model="content"
     ></textarea>
+    <input type="file" name="image" @change="addImage" />
     <button @click="createPost">Créer un post</button>
-  </div>
+  </form>
 </template>
 <script>
 import InputForm from "@/components/InputForm.vue";
@@ -26,6 +27,7 @@ export default {
     return {
       title: "",
       content: "",
+      image: null,
     };
   },
   mounted() {
@@ -42,10 +44,17 @@ export default {
         title: this.title,
         content: this.content,
         userId: user.userId,
+        image: this.image,
       });
     },
     sendTile(payload) {
       this.title = payload.value;
+    },
+    addImage(e) {
+      this.image = e.target.files[0];
+    },
+    checkForm(e) {
+      e.preventDefault();
     },
   },
 };

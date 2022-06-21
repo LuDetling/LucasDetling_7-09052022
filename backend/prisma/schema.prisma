@@ -25,11 +25,12 @@ model Post {
   updatedAt DateTime @updatedAt
   published Boolean  @default(false)
   title     String   @db.VarChar(255)
-  likes     Int
-  dislikes  Int
+  likes     Int      @default(0)
+  dislikes  Int      @default(0)
   likedBy   Like[]
   User      User?    @relation(fields: [userId], references: [id])
   userId    Int?
+  imageUrl  String
 }
 
 model Like {

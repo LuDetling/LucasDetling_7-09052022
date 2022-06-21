@@ -11,7 +11,7 @@ exports.addUser = async (req, res, next) => {
       email: req.body.email,
       password: hash,
     };
-    await prisma.user.create({ data: user });
+    await prisma.User.create({ data: user });
     res.status(201).json({
       message: "Utilisateur créé !",
     });
@@ -24,7 +24,7 @@ exports.addUser = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.User.findUnique({
       where: {
         email: req.body.email,
       },
