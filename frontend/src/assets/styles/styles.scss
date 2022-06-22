@@ -1,7 +1,10 @@
-@import "./colors.scss";
+$primaire: #fd2d01;
+$secondaire: #ffd7d7;
+$tertiaire: #4e5166;
 
 body {
-    background-color: $darkblue;
+  background-color: $tertiaire;
+  font-family: "Lato", sans-serif !important;
 }
 
 *,

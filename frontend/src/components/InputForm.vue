@@ -58,7 +58,7 @@ export default {
     border-radius: 20px;
 
     &:focus-visible, &:hover {
-      outline: 3px solid $green;
+      outline: 3px solid green;
     }
   }
 

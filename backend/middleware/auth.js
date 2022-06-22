@@ -13,7 +13,8 @@ module.exports = async (req, res, next) => {
       },
     });
     req.user = user;
-    if (!req.body.userId) {
+    if (req.body.userId === undefined && userId != req.user.id) {
+      console.log("bloqué dans auth");
       throw "User ID non valable !";
     } else {
       next();

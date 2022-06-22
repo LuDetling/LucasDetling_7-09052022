@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const fs = require("fs");
 
 exports.showPosts = async (req, res) => {
   try {
@@ -10,29 +11,90 @@ exports.showPosts = async (req, res) => {
   }
 };
 
+exports.showPost = async (req, res) => {
+  try {
+    console.log(Number(req.params.id));
+    const post = await prisma.Post.findUnique({
+      where: {
+        id: Number(req.params.id),
+      },
+    });
+    res.status(200).json({
+      post,
+    });
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};
+
+exports.deletePost = async (req, res, next) => {
+  try {
+    const post = await prisma.Post.findUnique({
+      where: {
+        id: Number(req.params.id),
+      },
+    });
+    const filename = post.imageUrl.split("/images/")[1];
+    fs.unlink(`images/${filename}`, async () => {
+      const deletePost = await prisma.Post.delete({
+        where: { id: Number(req.params.id) },
+      });
+      res.status(200).json({
+        message: "Objet supprimé !",
+      });
+    });
+  } catch (error) {
+    res.status(401).json({ error });
+  }
+};
+
+exports.updatePost = async (req, res, next) => {
+  const { title, userId, content } = req.body;
+  try {
+    await prisma.Post.update({
+      where: {
+        id: Number(userId),
+      },
+      data: {
+        title: title,
+        content: content,
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
+      },
+    });
+    res.status(200).json({
+      message: "Objet modifié !",
+    });
+  } catch (error) {
+    res.status(501).json({
+      error,
+    });
+  }
+};
+
 exports.createPost = async (req, res, next) => {
-  const { title, content, userId, image } = req.body;
-  console.log(userId);
-  console.log(req.user.id);
+  const { title, content, user } = req.body;
+  console.log(req.body);
   const newPost = {
     title: title,
     content: content,
-    userId: userId,
+    userId: Number(user),
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
   };
   try {
-    if (req.user.id != userId) {
+    if (req.user.id != user) {
       throw "User ID non valable !";
     }
-    await prisma.post.create({ data: newPost });
+    await prisma.Post.create({ data: newPost });
     res.status(201).json({
       message: "Objet enregistré !",
     });
   } catch (error) {
     console.log(error);
-    res.status(400).json({
+    res.status(500).json({
       error,
     });
   }

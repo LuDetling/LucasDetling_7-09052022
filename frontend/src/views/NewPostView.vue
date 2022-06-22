@@ -9,7 +9,14 @@
       rows="10"
       v-model="content"
     ></textarea>
-    <input type="file" name="image" @change="addImage" />
+    <input
+      type="file"
+      name="image"
+      @change="addImage"
+      class="input-image"
+      id="imageInp"
+    />
+    <img id="image" alt="" />
     <button @click="createPost">Créer un post</button>
   </form>
 </template>
@@ -52,6 +59,7 @@ export default {
     },
     addImage(e) {
       this.image = e.target.files[0];
+      document.querySelector("#image").src = URL.createObjectURL(this.image);
     },
     checkForm(e) {
       e.preventDefault();
@@ -76,7 +84,7 @@ export default {
 
   button {
     background-color: white;
-    color: $darkblue;
+    color: $tertiaire;
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 20px;
@@ -84,7 +92,7 @@ export default {
     border: none;
     &:focus-visible,
     &:hover {
-      outline: 3px solid $green;
+      outline: 3px solid green;
     }
   }
   textarea {
@@ -94,6 +102,15 @@ export default {
   label {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
+  }
+  .input-image {
+    display: block;
+  }
+  #image {
+    margin: 1rem 0;
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
   }
 }
 </style>

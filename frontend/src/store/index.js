@@ -16,13 +16,16 @@ const modulePost = {
     user: user,
   },
   actions: {
+    // <--------------- UPDATE POST --------------->
+    async updatePost() {},
     // <--------------- CREATE POST --------------->
     async createPost({ commit, state }, postInfos) {
       const formData = new FormData();
-      formData.append("user", postInfos.userId);
       formData.append("title", postInfos.title);
       formData.append("content", postInfos.content);
+      formData.append("user", postInfos.userId);
       formData.append("image", postInfos.image);
+      console.log(formData.get("image"));
 
       const { token } = state.user;
       commit("setStatus", "loading");

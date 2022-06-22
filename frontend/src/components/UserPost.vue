@@ -1,11 +1,11 @@
 <template>
-  <div class="content-posts">
+  <div class="content-post">
     <div v-for="post of posts" :key="post.id" class="card-post-like">
       <div class="like-dislike">
         <button>{{ post.likes }}</button>
         <button>{{ post.dislikes }}</button>
       </div>
-      <div class="card-post">
+      <div class="card-post" @click="showPost(post.id)">
         <img :src="post.imageUrl" alt="Image du post" />
         <div class="post">
           <h1>{{ post.title }}</h1>
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import router from "@/router";
+
 export default {
   name: "userPost",
   data: () => {
@@ -36,25 +38,33 @@ export default {
     }
     const data = await response.json();
     const allPosts = data.posts;
-    // for sur posts
     for (let i = 0; i < allPosts.length; i++) {
       this.posts.push(allPosts[i]);
-      console.log(this.posts[i]);
     }
+  },
+  methods: {
+    showPost(id) {
+      router.push("/post/" + id);
+    },
   },
 };
 </script>
 
 <style lang="scss">
+@import "../assets/styles/styles.scss";
+.card-post-like:hover{
+  transform: scale(1.02);
+}
 .card-post-like {
   display: flex;
   margin: auto;
   width: 600px;
   padding: 0.5rem;
-  background: #2c3e50;
+  background: $secondaire;
   margin-bottom: 2rem;
+  transition: .2s;
   .like-dislike {
-    border-right: 1px solid white;
+    border-right: 1px solid $tertiaire;
     padding-right: 0.5rem;
     button {
       display: block;
@@ -63,19 +73,29 @@ export default {
   }
   .card-post {
     display: flex;
+    width: 100%;
+    cursor: pointer;
     img {
-      width: 100px;
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
       padding: 0 0.5rem;
-      border-right: 1px solid white;
+      border-right: 1px solid $tertiaire;
     }
     .post {
       padding-left: 0.5rem;
+      flex-grow: 2;
       h1 {
         margin: 0;
-        color: white;
+        color: $tertiaire;
+        text-align: start;
+        font-size: 1.7rem;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 1px solid $tertiaire;
       }
       p {
-        color: white;
+        color: $tertiaire;
         margin: 0;
         text-align: start;
       }

@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav class="nav">
     <router-link to="/" class="accueil">Accueil</router-link>
     <router-link v-if="user.userId != -1" to="/newPost"
       >Nouveau post</router-link
@@ -44,17 +44,16 @@ export default {
 @import "./assets/styles/styles.scss";
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Lato", Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 }
 
-nav {
+.nav {
   padding: 15px 30px;
-  background-color: $blue;
-  border-bottom: $grey solid 1px;
+  background-color: $secondaire;
+  border-bottom: $primaire solid 1px;
   margin-bottom: 3rem;
   display: flex;
   justify-content: space-between;
@@ -62,16 +61,16 @@ nav {
 
   a {
     font-weight: bold;
-    color: white;
+    color: $tertiaire;
     text-decoration: none;
     transition: 0.3s;
 
     &:hover {
-      color: $green;
+      color: $primaire;
     }
 
     &.router-link-exact-active {
-      color: $green;
+      color: $primaire;
       text-decoration: underline;
     }
   }
@@ -88,7 +87,7 @@ nav {
 
     .logout {
       background: none;
-      color: white;
+      color: $tertiaire;
       border: none;
       cursor: pointer;
       font-size: 16px;
@@ -98,7 +97,7 @@ nav {
       transition: 0.3s;
 
       &:hover {
-        color: $green;
+        color: $primaire;
       }
     }
   }
