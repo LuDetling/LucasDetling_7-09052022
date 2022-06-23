@@ -1,5 +1,10 @@
 <template>
-  <form class="new-post" enctype="multipart/form-data" @submit="checkForm">
+  <form
+    class="new-post"
+    enctype="multipart/form-data"
+    @submit="checkForm"
+    id="new-post"
+  >
     <InputForm name="title" label="Titre :" type="text" @showInput="sendTile" />
     <label for="content">Contenu :</label>
     <textarea
@@ -17,7 +22,7 @@
       id="imageInp"
     />
     <img id="image" alt="" />
-    <button @click="createPost">Créer un post</button>
+    <button type="submit">Créer un post</button>
   </form>
 </template>
 <script>
@@ -47,7 +52,7 @@ export default {
   },
   methods: {
     createPost() {
-      this.$store.dispatch("createPost", {
+      this.$store.dispatch("modulePost/createPost", {
         title: this.title,
         content: this.content,
         userId: user.userId,
@@ -63,6 +68,7 @@ export default {
     },
     checkForm(e) {
       e.preventDefault();
+      this.createPost();
     },
   },
 };

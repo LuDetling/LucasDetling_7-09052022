@@ -40,7 +40,7 @@ exports.login = async (req, res, next) => {
         error: "Mot de passe incorrect !",
       });
     }
-    const response = res.status(200).json({
+    res.status(200).json({
       userId: user.id,
       token: jwt.sign(
         {

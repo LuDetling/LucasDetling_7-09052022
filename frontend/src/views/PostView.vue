@@ -12,6 +12,7 @@
           <font-awesome-icon icon="fa-solid fa-thumbs-down" />
           {{ post.dislikes }}
         </div>
+        <button class="delete" @click="deletePost">Supprimer</button>
       </div>
     </div>
     <p class="content">{{ post.content }}</p>
@@ -19,12 +20,17 @@
 </template>
 
 <script>
+import router from "@/router";
+import { mapActions } from "vuex";
 export default {
   name: "postView",
   data: () => {
     return {
       post: [],
     };
+  },
+  methods: {
+    ...mapActions("modulePost", ["deletePost"]),
   },
   async created() {
     const url = location.href;
@@ -40,6 +46,9 @@ export default {
     }
     const data = await response.json();
     this.post = data.post;
+    if (!this.post) {
+      router.push("/");
+    }
   },
 };
 </script>

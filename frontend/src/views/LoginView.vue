@@ -30,7 +30,7 @@ const regexEmail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
 export default {
-  name: "login",
+  name: "loginView",
   components: {
     InputForm,
   },
@@ -116,7 +116,7 @@ export default {
 
   button {
     background-color: white;
-    color: $darkblue;
+    color: $tertiaire;
     font-size: 1rem;
     padding: .5rem 1rem;
     border-radius: 20px;
@@ -124,7 +124,7 @@ export default {
     border: none;
     &:focus-visible,
     &:hover {
-      outline: 3px solid $green;
+      outline: 3px solid green;
     }
   }
 }

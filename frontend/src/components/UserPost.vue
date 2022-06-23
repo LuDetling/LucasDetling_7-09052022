@@ -37,7 +37,7 @@ export default {
       );
     }
     const data = await response.json();
-    const allPosts = data.posts;
+    const allPosts = data.posts.reverse();
     for (let i = 0; i < allPosts.length; i++) {
       this.posts.push(allPosts[i]);
     }

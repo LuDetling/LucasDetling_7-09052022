@@ -15,9 +15,30 @@ const modulePost = {
   namespaced: true,
   state: {
     user: user,
-    post: [],
   },
   actions: {
+    // <--------------- DELETE POST --------------->
+    async deletePost({ state }) {
+      const { token } = state.user;
+      const id = location.href.split("/post/")[1];
+      const response = await fetch("http://localhost:3001/posts/" + id, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          authorization: `BEARER ${token}`,
+        },
+      });
+      if (!response.ok) {
+        console.log(
+          "Network request for products.json failed with response " +
+            response.status +
+            ": " +
+            response.statusText
+        );
+      }
+      router.push("/");
+    },
     // <--------------- UPDATE POST --------------->
     async updatePost() {},
     // <--------------- CREATE POST --------------->
@@ -33,8 +54,6 @@ const modulePost = {
       const response = await fetch("http://localhost:3001/posts", {
         method: "POST",
         headers: {
-          Accept: "application/json",
-          // "Content-Type": "application/json",
           authorization: `BEARER ${token}`,
         },
         body: formData,
@@ -84,6 +103,7 @@ const moduleUser = {
     // <--------------- LOGIN --------------->
 
     async login({ commit }, userInfos) {
+      console.log(userInfos);
       commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
