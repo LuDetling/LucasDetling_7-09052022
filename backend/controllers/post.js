@@ -13,7 +13,6 @@ exports.showPosts = async (req, res) => {
 
 exports.showPost = async (req, res) => {
   try {
-    console.log(Number(req.params.id));
     const post = await prisma.Post.findUnique({
       where: {
         id: Number(req.params.id),
@@ -75,7 +74,6 @@ exports.updatePost = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   const { title, content, user } = req.body;
-  console.log(req.body);
   const newPost = {
     title: title,
     content: content,

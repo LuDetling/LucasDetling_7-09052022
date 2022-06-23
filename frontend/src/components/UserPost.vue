@@ -5,7 +5,7 @@
         <button>{{ post.likes }}</button>
         <button>{{ post.dislikes }}</button>
       </div>
-      <div class="card-post" @click="showPost(post.id)">
+      <div class="card-post" @click="showOnePost(post.id)">
         <img :src="post.imageUrl" alt="Image du post" />
         <div class="post">
           <h1>{{ post.title }}</h1>
@@ -26,7 +26,7 @@ export default {
       posts: [],
     };
   },
-  async mounted() {
+  async created() {
     const response = await fetch("http://localhost:3001/posts");
     if (!response.ok) {
       console.log(
@@ -43,7 +43,7 @@ export default {
     }
   },
   methods: {
-    showPost(id) {
+    showOnePost(id) {
       router.push("/post/" + id);
     },
   },
@@ -52,7 +52,7 @@ export default {
 
 <style lang="scss">
 @import "../assets/styles/styles.scss";
-.card-post-like:hover{
+.card-post-like:hover {
   transform: scale(1.02);
 }
 .card-post-like {
@@ -62,7 +62,7 @@ export default {
   padding: 0.5rem;
   background: $secondaire;
   margin-bottom: 2rem;
-  transition: .2s;
+  transition: 0.2s;
   .like-dislike {
     border-right: 1px solid $tertiaire;
     padding-right: 0.5rem;

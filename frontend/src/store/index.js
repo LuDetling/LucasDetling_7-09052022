@@ -12,8 +12,10 @@ if (!user) {
 }
 
 const modulePost = {
+  namespaced: true,
   state: {
     user: user,
+    post: [],
   },
   actions: {
     // <--------------- UPDATE POST --------------->
@@ -25,7 +27,6 @@ const modulePost = {
       formData.append("content", postInfos.content);
       formData.append("user", postInfos.userId);
       formData.append("image", postInfos.image);
-      console.log(formData.get("image"));
 
       const { token } = state.user;
       commit("setStatus", "loading");
