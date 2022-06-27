@@ -40,7 +40,34 @@ const modulePost = {
       router.push("/");
     },
     // <--------------- UPDATE POST --------------->
-    async updatePost() {},
+    async updatePost({ state }, postInfos) {
+      const formData = new FormData();
+      formData.append("title", postInfos.title);
+      formData.append("content", postInfos.content);
+      formData.append("user", postInfos.userId);
+      formData.append("image", postInfos.image);
+
+      const { token } = state.user;
+      const id = location.href.split("/updatePost/")[1];
+
+      const response = await fetch("http://localhost:3001/posts/" + id, {
+        method: "PUT",
+        headers: {
+          authorization: `BEARER ${token}`,
+        },
+        body: formData,
+      });
+      if (!response.ok) {
+        console.log(
+          "Network request for products.json failed with response " +
+            response.status +
+            ": " +
+            response.statusText
+        );
+        return;
+      }
+      router.push("/post/" + id);
+    },
     // <--------------- CREATE POST --------------->
     async createPost({ commit, state }, postInfos) {
       const formData = new FormData();
@@ -103,7 +130,6 @@ const moduleUser = {
     // <--------------- LOGIN --------------->
 
     async login({ commit }, userInfos) {
-      console.log(userInfos);
       commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",

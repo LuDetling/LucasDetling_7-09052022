@@ -33,9 +33,12 @@ exports.deletePost = async (req, res, next) => {
         id: Number(req.params.id),
       },
     });
+    if (req.user.id != post.userId) {
+      console.log("Vous n'avez pas le droit !");
+    }
     const filename = post.imageUrl.split("/images/")[1];
     fs.unlink(`images/${filename}`, async () => {
-      const deletePost = await prisma.Post.delete({
+      await prisma.Post.delete({
         where: { id: Number(req.params.id) },
       });
       res.status(200).json({
@@ -48,20 +51,32 @@ exports.deletePost = async (req, res, next) => {
 };
 
 exports.updatePost = async (req, res, next) => {
-  const { title, userId, content } = req.body;
+  const { title, content } = req.body;
   try {
-    await prisma.Post.update({
-      where: {
-        id: Number(userId),
-      },
-      data: {
-        title: title,
-        content: content,
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${
-          req.file.filename
-        }`,
-      },
-    });
+    if (!req.file) {
+      await prisma.Post.update({
+        where: {
+          id: Number(req.params.id),
+        },
+        data: {
+          title: title,
+          content: content,
+        },
+      });
+    } else {
+      await prisma.Post.update({
+        where: {
+          id: Number(req.params.id),
+        },
+        data: {
+          title: title,
+          content: content,
+          imageUrl: `${req.protocol}://${req.get("host")}/images/${
+            req.file.filename
+          }`,
+        },
+      });
+    }
     res.status(200).json({
       message: "Objet modifié !",
     });
@@ -69,6 +84,7 @@ exports.updatePost = async (req, res, next) => {
     res.status(501).json({
       error,
     });
+    console.log(error);
   }
 };
 

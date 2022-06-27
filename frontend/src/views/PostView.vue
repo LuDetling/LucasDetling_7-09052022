@@ -13,6 +13,7 @@
           {{ post.dislikes }}
         </div>
         <button class="delete" @click="deletePost">Supprimer</button>
+        <button class="update" @click="updatePost">Modifier</button>
       </div>
     </div>
     <p class="content">{{ post.content }}</p>
@@ -31,6 +32,11 @@ export default {
   },
   methods: {
     ...mapActions("modulePost", ["deletePost"]),
+    updatePost() {
+      const id = location.href.split("/post/")[1];
+      router.push("/updatePost/" + id);
+      return id;
+    },
   },
   async created() {
     const url = location.href;

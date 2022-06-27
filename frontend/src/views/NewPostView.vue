@@ -5,7 +5,12 @@
     @submit="checkForm"
     id="new-post"
   >
-    <InputForm name="title" label="Titre :" type="text" @showInput="sendTile" />
+    <InputForm
+      name="title"
+      label="Titre :"
+      type="text"
+      @showInput="sendTitle"
+    />
     <label for="content">Contenu :</label>
     <textarea
       name="content"
@@ -59,7 +64,7 @@ export default {
         image: this.image,
       });
     },
-    sendTile(payload) {
+    sendTitle(payload) {
       this.title = payload.value;
     },
     addImage(e) {
