@@ -35,6 +35,7 @@ exports.deletePost = async (req, res, next) => {
     });
     if (req.user.id != post.userId) {
       console.log("Vous n'avez pas le droit !");
+      return;
     }
     const filename = post.imageUrl.split("/images/")[1];
     fs.unlink(`images/${filename}`, async () => {

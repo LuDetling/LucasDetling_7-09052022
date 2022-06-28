@@ -39,9 +39,16 @@ export default {
     },
   },
   async created() {
+    const userParse = JSON.parse(localStorage.getItem("user"));
+    const token = userParse.token;
     const url = location.href;
     const id = url.split("/post/")[1];
-    const response = await fetch("http://localhost:3001/posts/" + id);
+    const response = await fetch("http://localhost:3001/posts/" + id, {
+      method: "GET",
+      headers: {
+        authorization: `BEARER ${token}`,
+      },
+    });
     if (!response.ok) {
       console.log(
         "Network request for products.json failed with response " +

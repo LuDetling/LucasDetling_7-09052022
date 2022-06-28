@@ -27,7 +27,17 @@ export default {
     };
   },
   async created() {
-    const response = await fetch("http://localhost:3001/posts");
+    const userParse = JSON.parse(localStorage.getItem("user"));
+    if (!userParse) {
+      return;
+    }
+    const token = userParse.token;
+    const response = await fetch("http://localhost:3001/posts", {
+      method: "GET",
+      headers: {
+        authorization: `BEARER ${token}`,
+      },
+    });
     if (!response.ok) {
       console.log(
         "Network request for products.json failed with response " +

@@ -1,20 +1,33 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const yup = require("yup");
 
 const prisma = new PrismaClient();
 
 exports.addUser = async (req, res, next) => {
   try {
-    const hash = await bcrypt.hash(req.body.password, 10);
-    user = {
-      email: req.body.email,
-      password: hash,
-    };
-    await prisma.User.create({ data: user });
-    res.status(201).json({
-      message: "Utilisateur créé !",
+    // création du schema yup pour sécurité
+    let schemaUser = yup.object().shape({
+      email: yup.string().required().email(),
+      password: yup.string().min(8).required(),
     });
+    // récupération de la requete
+    const fetchUser = {
+      email: req.body.email,
+      password: req.body.password,
+    };
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const user = await schemaUser.validate(fetchUser);
+    // si les vérifications de yup ont fonctionné
+    // alors on transforme le mot de passe
+    if (user) {
+      fetchUser.password = hash;
+      await prisma.User.create({ data: fetchUser });
+      res.status(201).json({
+        message: "Utilisateur créé !",
+      });
+    }
   } catch (error) {
     res.status(500).json({
       error,
