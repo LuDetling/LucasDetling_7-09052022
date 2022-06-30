@@ -22,9 +22,7 @@
 <script>
 import InputForm from "@/components/InputForm.vue";
 import router from "@/router";
-
-const user = JSON.parse(localStorage.getItem("user"));
-const userId = user.userId;
+import { mapActions, mapState } from "vuex";
 
 export default {
   components: { InputForm },
@@ -34,27 +32,19 @@ export default {
     };
   },
   async created() {
-    const id = location.href.split("/updatePost/")[1];
-    const userParse = JSON.parse(localStorage.getItem("user"));
-    const token = userParse.token;
-    const response = await fetch("http://localhost:3001/posts/" + id, {
-      method: "GET",
-      headers: {
-        authorization: `BEARER ${token}`,
-      },
-    });
-    if (!response.ok) {
-      console.log(
-        "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
-      );
+    if (this.user.userId === -1) {
+      router.push("/login");
+      return;
     }
-    const data = await response.json();
+    const id = location.href.split("/updatePost/")[1];
+    const data = await this.showOnePost(id);
     this.post = data.post;
+    if (this.post.userId != this.user.userId) {
+      router.push("/");
+    }
   },
   methods: {
+    ...mapActions("modulePost", ["showOnePost"]),
     changeImage(e) {
       this.post.image = e.target.files[0];
       document.querySelector(".image").src = URL.createObjectURL(
@@ -73,6 +63,9 @@ export default {
       this.post.content = payload.value;
     },
     updatePost() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user.userId;
+
       this.$store.dispatch("modulePost/updatePost", {
         title: this.post.title,
         content: this.post.content,
@@ -80,6 +73,9 @@ export default {
         image: this.post.image,
       });
     },
+  },
+  computed: {
+    ...mapState(["user"]),
   },
 };
 </script>

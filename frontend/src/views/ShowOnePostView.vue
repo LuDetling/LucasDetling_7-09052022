@@ -12,17 +12,20 @@
           <font-awesome-icon icon="fa-solid fa-thumbs-down" />
           {{ post.dislikes }}
         </div>
-        <button class="delete" @click="deletePost">Supprimer</button>
-        <button class="update" @click="updatePost">Modifier</button>
       </div>
     </div>
     <p class="content">{{ post.content }}</p>
+    <div v-if="this.user.userId === post.userId">
+      <button class="delete" @click="deletePost">Supprimer</button>
+      <button class="update" @click="updatePost">Modifier</button>
+    </div>
   </div>
 </template>
 
 <script>
 import router from "@/router";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
+
 export default {
   name: "postView",
   data: () => {
@@ -31,37 +34,27 @@ export default {
     };
   },
   methods: {
-    ...mapActions("modulePost", ["deletePost"]),
+    ...mapActions("modulePost", ["deletePost", "showOnePost"]),
     updatePost() {
       const id = location.href.split("/post/")[1];
       router.push("/updatePost/" + id);
-      return id;
     },
   },
   async created() {
-    const userParse = JSON.parse(localStorage.getItem("user"));
-    const token = userParse.token;
-    const url = location.href;
-    const id = url.split("/post/")[1];
-    const response = await fetch("http://localhost:3001/posts/" + id, {
-      method: "GET",
-      headers: {
-        authorization: `BEARER ${token}`,
-      },
-    });
-    if (!response.ok) {
-      console.log(
-        "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
-      );
+    if (this.user.userId === -1) {
+      router.push("/login");
+      return;
     }
-    const data = await response.json();
+    const id = location.href.split("/post/")[1];
+    const data = await this.showOnePost(id);
     this.post = data.post;
+
     if (!this.post) {
       router.push("/");
     }
+  },
+  computed: {
+    ...mapState(["user"]),
   },
 };
 </script>
@@ -80,6 +73,11 @@ export default {
     justify-content: center;
     margin-left: 22px;
     margin-bottom: 1rem;
+    .image {
+      max-width: 500px;
+      max-height: 500px;
+      object-fit: cover;
+    }
     .like {
       div {
         margin-bottom: 0.5rem;

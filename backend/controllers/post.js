@@ -54,6 +54,15 @@ exports.deletePost = async (req, res, next) => {
 exports.updatePost = async (req, res, next) => {
   const { title, content } = req.body;
   try {
+    const post = await prisma.Post.findUnique({
+      where: {
+        id: Number(req.params.id),
+      },
+    });
+    if (req.user.id != post.userId) {
+      console.log("Vous n'avez pas le droit !");
+      return;
+    }
     if (!req.file) {
       await prisma.Post.update({
         where: {

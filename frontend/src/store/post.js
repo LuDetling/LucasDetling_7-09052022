@@ -3,6 +3,49 @@ import router from "../router/index";
 const modulePost = {
   namespaced: true,
   actions: {
+    // <--------------- AFFICHER UN POST --------------->
+    async showOnePost({ rootState }, id) {
+      const { token } = rootState.user;
+      const response = await fetch("http://localhost:3001/posts/" + id, {
+        method: "GET",
+        headers: {
+          authorization: `BEARER ${token}`,
+        },
+      });
+      if (!response.ok) {
+        console.log(
+          "Network request for products.json failed with response " +
+            response.status +
+            ": " +
+            response.statusText
+        );
+      }
+      return response.json();
+    },
+    // <--------------- AFFICHER POSTS --------------->
+    async showPosts({ rootState }) {
+      const { token } = rootState.user;
+      if (rootState.user.userId === -1) {
+        return;
+      }
+      const response = await fetch("http://localhost:3001/posts", {
+        method: "GET",
+        headers: {
+          authorization: `BEARER ${token}`,
+        },
+      });
+      if (!response.ok) {
+        console.log(
+          "Network request for products.json failed with response " +
+            response.status +
+            ": " +
+            response.statusText
+        );
+      }
+      const data = await response.json();
+      const allPosts = data.posts.reverse();
+      return allPosts;
+    },
     // <--------------- DELETE POST --------------->
     async deletePost({ rootState }) {
       const { token } = rootState.user;

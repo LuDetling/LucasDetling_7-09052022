@@ -14,7 +14,6 @@ module.exports = async (req, res, next) => {
     });
     req.user = user;
     if (!req.user) {
-      console.log("bloqué dans auth");
       throw "User ID non valable !";
     } else {
       next();

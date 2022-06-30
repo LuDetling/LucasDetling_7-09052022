@@ -18,6 +18,7 @@
 
 <script>
 import router from "@/router";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "userPost",
@@ -27,27 +28,11 @@ export default {
     };
   },
   async created() {
-    const userParse = JSON.parse(localStorage.getItem("user"));
-    if (!userParse) {
+    if (this.user.userId === -1) {
+      router.push("/login");
       return;
     }
-    const token = userParse.token;
-    const response = await fetch("http://localhost:3001/posts", {
-      method: "GET",
-      headers: {
-        authorization: `BEARER ${token}`,
-      },
-    });
-    if (!response.ok) {
-      console.log(
-        "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
-      );
-    }
-    const data = await response.json();
-    const allPosts = data.posts.reverse();
+    const allPosts = await this.showPosts();
     for (let i = 0; i < allPosts.length; i++) {
       this.posts.push(allPosts[i]);
     }
@@ -56,6 +41,10 @@ export default {
     showOnePost(id) {
       router.push("/post/" + id);
     },
+    ...mapActions("modulePost", ["showPosts"]),
+  },
+  computed: {
+    ...mapState(["user"]),
   },
 };
 </script>

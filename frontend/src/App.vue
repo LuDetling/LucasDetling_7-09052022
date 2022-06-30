@@ -58,13 +58,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+  position: sticky;
+  top: 0;
   a {
     font-weight: bold;
     color: $tertiaire;
     text-decoration: none;
     transition: 0.3s;
-
+    width: 200px;
     &:hover {
       color: $primaire;
     }
@@ -76,6 +77,7 @@ export default {
   }
 
   .log {
+    width: 200px;
     a {
       display: block;
       text-align: start;
