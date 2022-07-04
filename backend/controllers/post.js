@@ -123,3 +123,112 @@ exports.createPost = async (req, res, next) => {
     });
   }
 };
+
+exports.likePost = async (req, res, next) => {
+  const { like, userId } = req.body;
+  const post = await prisma.Post.findUnique({
+    where: {
+      id: Number(req.params.id),
+    },
+  });
+  console.log(post);
+  console.log(like, userId);
+  // pas acces aux tableaux des userliked disliked
+  try {
+    if (like === 1) {
+      // si déja dislike avec cet userid on retire
+      if (post.dislikedBy.includes(userId)) {
+        await prisma.Post.updatePost({
+          where: {
+            id: Number(req.params.id),
+          },
+          data: {
+            dislikes: {
+              increment: 1,
+            },
+            dislikedBy: {
+              unset: userId,
+            },
+          },
+        });
+      }
+      // ensuite on ajoute
+      await prisma.Post.updatePost({
+        where: {
+          id: Number(req.params.id),
+        },
+        data: {
+          likes: {
+            increment: 1,
+          },
+          likedBy: {
+            unset: userId,
+          },
+        },
+      });
+    }
+    if (like === 0) {
+      if (post.dislikedBy.includes(userId)) {
+        await prisma.Post.updatePost({
+          where: {
+            id: Number(req.params.id),
+          },
+          data: {
+            dislikes: {
+              increment: 1,
+            },
+            dislikedBy: {
+              unset: userId,
+            },
+          },
+        });
+      } else if (post.likedBy.includes(userId)) {
+        await prisma.Post.updatePost({
+          where: {
+            id: Number(req.params.id),
+          },
+          data: {
+            likes: {
+              increment: -1,
+            },
+            likedBy: {
+              unset: userId,
+            },
+          },
+        });
+      }
+    }
+    if (like === -1) {
+      if (post.likedBy.includes(userId)) {
+        await prisma.Post.updatePost({
+          where: {
+            id: Number(req.params.id),
+          },
+          data: {
+            likes: {
+              increment: -1,
+            },
+            likedBy: {
+              unset: userId,
+            },
+          },
+        });
+      }
+      await prisma.Post.updatePost({
+        where: {
+          id: Number(req.params.id),
+        },
+        data: {
+          dislikes: {
+            increment: 1,
+          },
+          dislikedBy: {
+            push: userId,
+          },
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
