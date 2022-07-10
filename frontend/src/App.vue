@@ -49,6 +49,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
+button {
+  font-family: "Lato", Avenir, Helvetica, Arial, sans-serif;
+}
 
 .nav {
   padding: 15px 30px;

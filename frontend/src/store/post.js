@@ -126,6 +126,33 @@ const modulePost = {
       }
       router.push("/");
     },
+    // <--------------- CREATE POST --------------->
+    async likeOrDislikePost({ rootState }, likeInfos) {
+      console.log(likeInfos);
+      const { postId } = likeInfos;
+      const { token } = rootState.user;
+      const response = await fetch(
+        "http://localhost:3001/posts/" + postId + "/like",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            authorization: `BEARER ${token}`,
+          },
+          body: JSON.stringify(likeInfos),
+        }
+      );
+      if (!response.ok) {
+        console.log(
+          "Network request for products.json failed with response " +
+            response.status +
+            ": " +
+            response.statusText
+        );
+        return;
+      }
+    },
   },
 };
 

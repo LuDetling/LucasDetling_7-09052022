@@ -4,7 +4,13 @@ const fs = require("fs");
 
 exports.showPosts = async (req, res) => {
   try {
-    const posts = await prisma.Post.findMany();
+    const posts = await prisma.Post.findMany({
+      include: {
+        dislikedBy: true,
+        likedBy: true,
+      },
+    });
+
     res.status(200).json({ posts });
   } catch (error) {
     res.status(400).json({ error });
@@ -16,6 +22,10 @@ exports.showPost = async (req, res) => {
     const post = await prisma.Post.findUnique({
       where: {
         id: Number(req.params.id),
+      },
+      include: {
+        dislikedBy: true,
+        likedBy: true,
       },
     });
     res.status(200).json({
@@ -33,10 +43,10 @@ exports.deletePost = async (req, res, next) => {
         id: Number(req.params.id),
       },
     });
-    if (req.user.id != post.userId) {
-      console.log("Vous n'avez pas le droit !");
-      return;
-    }
+    // if (req.user.id != post.userId) {
+    //   console.log("Vous n'avez pas le droit !");
+    //   return;
+    // }
     const filename = post.imageUrl.split("/images/")[1];
     fs.unlink(`images/${filename}`, async () => {
       await prisma.Post.delete({
@@ -59,10 +69,10 @@ exports.updatePost = async (req, res, next) => {
         id: Number(req.params.id),
       },
     });
-    if (req.user.id != post.userId) {
-      console.log("Vous n'avez pas le droit !");
-      return;
-    }
+    // if (req.user.id != post.userId) {
+    //   console.log("Vous n'avez pas le droit !");
+    //   return;
+    // }
     if (!req.file) {
       await prisma.Post.update({
         where: {
@@ -126,81 +136,108 @@ exports.createPost = async (req, res, next) => {
 
 exports.likePost = async (req, res, next) => {
   const { like, userId } = req.body;
+  const postId = Number(req.params.id);
   const post = await prisma.Post.findUnique({
     where: {
-      id: Number(req.params.id),
+      id: postId,
+    },
+    include: {
+      dislikedBy: true,
+      likedBy: true,
     },
   });
-  console.log(post);
-  console.log(like, userId);
+  const usersLiked = post.likedBy.map((x) => x.userId);
+  const usersDisliked = post.dislikedBy.map((x) => x.userId);
   // pas acces aux tableaux des userliked disliked
   try {
     if (like === 1) {
       // si déja dislike avec cet userid on retire
-      if (post.dislikedBy.includes(userId)) {
-        await prisma.Post.updatePost({
+      if (usersDisliked.includes(userId)) {
+        await prisma.Post.update({
           where: {
             id: Number(req.params.id),
           },
           data: {
             dislikes: {
-              increment: 1,
+              increment: -1,
             },
             dislikedBy: {
-              unset: userId,
+              deleteMany: {
+                userId,
+              },
             },
           },
         });
       }
       // ensuite on ajoute
-      await prisma.Post.updatePost({
+
+      await prisma.Post.update({
         where: {
           id: Number(req.params.id),
+        },
+        include: {
+          dislikedBy: true,
+          likedBy: true,
         },
         data: {
           likes: {
             increment: 1,
           },
           likedBy: {
-            unset: userId,
+            create: {
+              userId,
+            },
           },
         },
       });
+
+      res.status(201).json({
+        message: "like +1 !",
+      });
     }
     if (like === 0) {
-      if (post.dislikedBy.includes(userId)) {
-        await prisma.Post.updatePost({
+      if (usersDisliked.includes(userId)) {
+        await prisma.Post.update({
           where: {
             id: Number(req.params.id),
           },
           data: {
             dislikes: {
-              increment: 1,
+              increment: -1,
             },
             dislikedBy: {
-              unset: userId,
+              deleteMany: {
+                userId,
+              },
             },
           },
         });
-      } else if (post.likedBy.includes(userId)) {
-        await prisma.Post.updatePost({
+      } else if (usersLiked.includes(userId)) {
+        await prisma.Post.update({
           where: {
             id: Number(req.params.id),
           },
+          // include: {
+          //   dislikedBy: true,
+          //   likedBy: true,
+          // },
           data: {
             likes: {
               increment: -1,
             },
             likedBy: {
-              unset: userId,
+              deleteMany: { userId },
             },
           },
         });
       }
+      res.status(201).json({
+        message: "like +0 !",
+      });
     }
     if (like === -1) {
-      if (post.likedBy.includes(userId)) {
-        await prisma.Post.updatePost({
+      if (usersLiked.includes(userId)) {
+        await prisma.Post.update({
           where: {
             id: Number(req.params.id),
           },
@@ -209,12 +246,14 @@ exports.likePost = async (req, res, next) => {
               increment: -1,
             },
             likedBy: {
-              unset: userId,
+              deleteMany: {
+                userId,
+              },
             },
           },
         });
       }
-      await prisma.Post.updatePost({
+      await prisma.Post.update({
         where: {
           id: Number(req.params.id),
         },
@@ -223,9 +262,14 @@ exports.likePost = async (req, res, next) => {
             increment: 1,
           },
           dislikedBy: {
-            push: userId,
+            create: {
+              userId,
+            },
           },
         },
+      });
+      res.status(201).json({
+        message: "like -1 !",
       });
     }
   } catch (error) {

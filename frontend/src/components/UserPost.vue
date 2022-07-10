@@ -2,10 +2,12 @@
   <div class="content-post">
     <div v-for="post of posts" :key="post.id" class="card-post-like">
       <div class="like-dislike">
-        <button>{{ post.likes }}</button>
-        <button>{{ post.dislikes }}</button>
+        <button @click="addOneLike(post)">
+          {{ post.likes }}
+        </button>
+        <button @click="addOneDislike(post)">{{ post.dislikes }}</button>
       </div>
-      <div class="card-post" @click="showOnePost(post.id)">
+      <div class="card-post" @click="goShowOnePost(post.id)">
         <img :src="post.imageUrl" alt="Image du post" />
         <div class="post">
           <h1>{{ post.title }}</h1>
@@ -25,6 +27,7 @@ export default {
   data: () => {
     return {
       posts: [],
+      like: 0,
     };
   },
   async created() {
@@ -38,10 +41,81 @@ export default {
     }
   },
   methods: {
-    showOnePost(id) {
+    goShowOnePost(id) {
       router.push("/post/" + id);
     },
-    ...mapActions("modulePost", ["showPosts"]),
+    ...mapActions("modulePost", ["showPosts", "showOnePost"]),
+    // peut etre faire un component, a reflechir
+    async addOneLike(post) {
+      // si il y a deja un like on retire un like
+      // si il y a deja un dislike on retire un dislike
+      // a chaque fin de click il faut récupérer si userId est dans usersliked
+      const postId = post.id;
+      const localParse = JSON.parse(localStorage.getItem("user"));
+      const userId = localParse.userId;
+      const response = await this.showOnePost(postId);
+      // si user id a déja un like sur ce post on enleve
+      const usersLiked = response.post.likedBy.map((x) => x.userId);
+      const usersDisliked = response.post.dislikedBy.map((x) => x.userId);
+      if (usersLiked.includes(userId)) {
+        post.likes--;
+        this.$store.dispatch("modulePost/likeOrDislikePost", {
+          like: 0,
+          userId: userId,
+          postId,
+        });
+      } else if (usersDisliked.includes(userId)) {
+        post.dislikes--;
+        post.likes++;
+        this.$store.dispatch("modulePost/likeOrDislikePost", {
+          like: 1,
+          userId: userId,
+          postId,
+        });
+      } else {
+        post.likes++;
+        this.$store.dispatch("modulePost/likeOrDislikePost", {
+          like: 1,
+          userId: userId,
+          postId,
+        });
+      }
+    },
+    async addOneDislike(post) {
+      // si il y a deja un like on retire un like
+      // si il y a deja un dislike on retire un dislike
+      // a chaque fin de click il faut récupérer si userId est dans usersliked
+      const postId = post.id;
+      const localParse = JSON.parse(localStorage.getItem("user"));
+      const userId = localParse.userId;
+      const response = await this.showOnePost(postId);
+      // si user id a déja un like sur ce post on enleve
+      const usersLiked = response.post.likedBy.map((x) => x.userId);
+      const usersDisliked = response.post.dislikedBy.map((x) => x.userId);
+      if (usersDisliked.includes(userId)) {
+        post.dislikes--;
+        this.$store.dispatch("modulePost/likeOrDislikePost", {
+          like: 0,
+          userId: userId,
+          postId,
+        });
+      } else if (usersLiked.includes(userId)) {
+        post.likes--;
+        post.dislikes++;
+        this.$store.dispatch("modulePost/likeOrDislikePost", {
+          like: -1,
+          userId: userId,
+          postId,
+        });
+      } else {
+        post.dislikes++;
+        this.$store.dispatch("modulePost/likeOrDislikePost", {
+          like: -1,
+          userId: userId,
+          postId,
+        });
+      }
+    },
   },
   computed: {
     ...mapState(["user"]),
