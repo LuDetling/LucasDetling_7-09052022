@@ -44,6 +44,7 @@ exports.deletePost = async (req, res, next) => {
         id: Number(req.params.id),
       },
     });
+    // vérification si l'id utilisateur correspond à celui du post et si le statut de l'utilisateur est différent de admin
     if (req.user.id != post.userId && req.user.statut != "admin") {
       console.log("Vous n'êtes pas le propriétaire du post");
       return;

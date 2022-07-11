@@ -15,9 +15,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-            response.status +
-            ": " +
-            response.statusText
+          response.status +
+          ": " +
+          response.statusText
         );
       }
       return response.json();
@@ -37,9 +37,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-            response.status +
-            ": " +
-            response.statusText
+          response.status +
+          ": " +
+          response.statusText
         );
       }
       const data = await response.json();
@@ -61,9 +61,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-            response.status +
-            ": " +
-            response.statusText
+          response.status +
+          ": " +
+          response.statusText
         );
       }
       router.push("/");
@@ -89,9 +89,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-            response.status +
-            ": " +
-            response.statusText
+          response.status +
+          ": " +
+          response.statusText
         );
         return;
       }
@@ -117,9 +117,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-            response.status +
-            ": " +
-            response.statusText
+          response.status +
+          ": " +
+          response.statusText
         );
         commit("setStatus", "error_create");
         return;
@@ -128,7 +128,6 @@ const modulePost = {
     },
     // <--------------- CREATE POST --------------->
     async likeOrDislikePost({ rootState }, likeInfos) {
-      console.log(likeInfos);
       const { postId } = likeInfos;
       const { token } = rootState.user;
       const response = await fetch(
@@ -146,9 +145,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-            response.status +
-            ": " +
-            response.statusText
+          response.status +
+          ": " +
+          response.statusText
         );
         return;
       }
