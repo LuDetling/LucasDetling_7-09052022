@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const fs = require("fs");
 
+// afficher tous les posts
 exports.showPosts = async (req, res) => {
   try {
     const posts = await prisma.Post.findMany({
@@ -16,7 +17,7 @@ exports.showPosts = async (req, res) => {
     res.status(400).json({ error });
   }
 };
-
+// afficher un post
 exports.showPost = async (req, res) => {
   try {
     const post = await prisma.Post.findUnique({
@@ -35,7 +36,7 @@ exports.showPost = async (req, res) => {
     res.status(400).json({ error });
   }
 };
-
+// supprimer un post
 exports.deletePost = async (req, res, next) => {
   try {
     const post = await prisma.Post.findUnique({
@@ -43,10 +44,10 @@ exports.deletePost = async (req, res, next) => {
         id: Number(req.params.id),
       },
     });
-    // if (req.user.id != post.userId) {
-    //   console.log("Vous n'avez pas le droit !");
-    //   return;
-    // }
+    if (req.user.id != post.userId && req.user.statut != "admin") {
+      console.log("Vous n'êtes pas le propriétaire du post");
+      return;
+    }
     const filename = post.imageUrl.split("/images/")[1];
     fs.unlink(`images/${filename}`, async () => {
       await prisma.Post.delete({
@@ -60,19 +61,22 @@ exports.deletePost = async (req, res, next) => {
     res.status(401).json({ error });
   }
 };
-
+// modifier un post
 exports.updatePost = async (req, res, next) => {
   const { title, content } = req.body;
   try {
+    // vérification si l'utilisateur qui essaye de modifier est bien celui qui a créé le post
     const post = await prisma.Post.findUnique({
       where: {
         id: Number(req.params.id),
       },
     });
-    // if (req.user.id != post.userId) {
-    //   console.log("Vous n'avez pas le droit !");
-    //   return;
-    // }
+    if (req.user.id != post.userId && req.user.statut != "admin") {
+      console.log("Vous n'êtes pas le propriétaire du post");
+      return;
+    }
+
+    //modification
     if (!req.file) {
       await prisma.Post.update({
         where: {
@@ -91,9 +95,8 @@ exports.updatePost = async (req, res, next) => {
         data: {
           title: title,
           content: content,
-          imageUrl: `${req.protocol}://${req.get("host")}/images/${
-            req.file.filename
-          }`,
+          imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
+            }`,
         },
       });
     }
@@ -107,16 +110,15 @@ exports.updatePost = async (req, res, next) => {
     console.log(error);
   }
 };
-
+// créer un post
 exports.createPost = async (req, res, next) => {
   const { title, content, user } = req.body;
   const newPost = {
     title: title,
     content: content,
     userId: Number(user),
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${
-      req.file.filename
-    }`,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
+      }`,
   };
   try {
     if (req.user.id != user) {
@@ -133,7 +135,7 @@ exports.createPost = async (req, res, next) => {
     });
   }
 };
-
+// like ou dislike un post
 exports.likePost = async (req, res, next) => {
   const { like, userId } = req.body;
   const postId = Number(req.params.id);
@@ -148,10 +150,8 @@ exports.likePost = async (req, res, next) => {
   });
   const usersLiked = post.likedBy.map((x) => x.userId);
   const usersDisliked = post.dislikedBy.map((x) => x.userId);
-  // pas acces aux tableaux des userliked disliked
   try {
     if (like === 1) {
-      // si déja dislike avec cet userid on retire
       if (usersDisliked.includes(userId)) {
         await prisma.Post.update({
           where: {
@@ -169,8 +169,6 @@ exports.likePost = async (req, res, next) => {
           },
         });
       }
-      // ensuite on ajoute
-
       await prisma.Post.update({
         where: {
           id: Number(req.params.id),
@@ -217,10 +215,6 @@ exports.likePost = async (req, res, next) => {
           where: {
             id: Number(req.params.id),
           },
-          // include: {
-          //   dislikedBy: true,
-          //   likedBy: true,
-          // },
           data: {
             likes: {
               increment: -1,
