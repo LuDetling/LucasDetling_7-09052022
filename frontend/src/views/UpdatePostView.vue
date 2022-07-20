@@ -1,21 +1,24 @@
 <template>
   <div class="content-post">
-    <InputForm
-      :placeholder="post.title"
-      id="title"
-      label="Titre :"
-      @showInput="sendTitle"
-    />
-    <InputForm
-      :placeholder="post.content"
-      id="content"
-      label="Contenu :"
-      @showInput="sendContent"
-    />
-    <InputForm label="Image :" type="file" id="image" @change="changeImage" />
-    <img :src="post.imageUrl" alt="" class="image" />
-    <button @click="updatePost">Modifier</button>
-    <button @click="annuler">Annuler</button>
+    <div v-if="!setPost">loading...</div>
+    <div v-else>
+      <InputForm
+        :placeholder="setPost.title"
+        id="title"
+        label="Titre :"
+        @showInput="sendTitle"
+      />
+      <InputForm
+        :placeholder="setPost.content"
+        id="content"
+        label="Contenu :"
+        @showInput="sendContent"
+      />
+      <InputForm label="Image :" type="file" id="image" @change="changeImage" />
+      <img :src="setPost.imageUrl" alt="" class="image" />
+      <button @click="updatePost">Modifier</button>
+      <button @click="annuler">Annuler</button>
+    </div>
   </div>
 </template>
 
@@ -26,22 +29,12 @@ import { mapActions, mapState } from "vuex";
 
 export default {
   components: { InputForm },
-  data: () => {
-    return {
-      post: [],
-    };
-  },
   async created() {
     if (this.user.userId === -1) {
       router.push("/login");
       return;
     }
-    const id = location.href.split("/updatePost/")[1];
-    const data = await this.showOnePost(id);
-    this.post = data.post;
-    if (this.post.userId != this.user.userId) {
-      router.push("/");
-    }
+    await this.showOnePost(this.$route.params.id);
   },
   methods: {
     ...mapActions("modulePost", ["showOnePost"]),
@@ -52,30 +45,29 @@ export default {
       );
     },
     annuler() {
-      const id = location.href.split("/updatePost/")[1];
-
-      router.push("/post/" + id);
+      router.push("/post/" + this.$route.params.id);
     },
     sendTitle(payload) {
-      this.post.title = payload.value;
+      this.setPost.title = payload.value;
     },
     sendContent(payload) {
-      this.post.content = payload.value;
+      this.setPost.content = payload.value;
     },
     updatePost() {
       const user = JSON.parse(localStorage.getItem("user"));
       const userId = user.userId;
 
       this.$store.dispatch("modulePost/updatePost", {
-        title: this.post.title,
-        content: this.post.content,
+        title: this.setPost.title,
+        content: this.setPost.content,
         userId: userId,
-        image: this.post.image,
+        image: this.setPost.image,
       });
     },
   },
   computed: {
     ...mapState(["user"]),
+    ...mapState("modulePost", ["setPost"]),
   },
 };
 </script>

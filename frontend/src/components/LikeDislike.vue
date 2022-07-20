@@ -12,40 +12,60 @@
       <font-awesome-icon icon="fa-solid fa-thumbs-down" />
       {{ post.dislikes }}
     </button>
+    <button
+      @click="likeDislike(this.like === 0 ? 1 : 0)"
+      class="dislike"
+      :class="{ isDisliked: isDisliked }"
+    >
+      <font-awesome-icon icon="fa-solid fa-thumbs-down" />
+      {{ post.dislikes }}
+    </button>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   props: {
     id: Number,
   },
   data: () => {
     return {
-      post: [],
+      post: {},
       isLiked: false,
       isDisliked: false,
+      active: 2,
+      like: 0,
     };
   },
   async created() {
-    const response = await this.showOnePost(this.id);
-    this.post = response.post;
+    const response = await this.updateLikeDislike(this.id);
+    this.post = response;
+  },
+  computed: {
+    ...mapState("modulePost", ["setPost"]),
   },
   methods: {
-    ...mapActions("modulePost", ["showOnePost"]),
+    ...mapActions("modulePost", ["updateLikeDislike"]),
+    // essayer de le faire pour les 2
+    async likeDislike() {
+      this.like = 1;
+      // this.$store.dispatch("modulePost/likeOrDislikePost", {
+      //   like: this.like ? 0 : 1,
+      //   postId: this.$route.params.id,
+      // });
+    },
     async addOneLike() {
       // récupération de la bdd
-      const response = await this.showOnePost(this.id);
-      const post = response.post;
-      this.post = post;
+      const response = await this.updateLikeDislike(this.id);
+      this.post = response;
       const postId = this.id;
       // on regarde dans le localstorage
       const localParse = JSON.parse(localStorage.getItem("user"));
       const userId = localParse.userId;
       // on regarde si le user a déja like
-      const usersLiked = response.post.likedBy.map((x) => x.userId);
-      const usersDisliked = response.post.dislikedBy.map((x) => x.userId);
+      const usersLiked = response.likedBy.map((x) => x.userId);
+      const usersDisliked = response.dislikedBy.map((x) => x.userId);
       if (usersLiked.includes(userId)) {
         this.post.likes--;
         this.$store.dispatch("modulePost/likeOrDislikePost", {
@@ -72,16 +92,15 @@ export default {
     },
     async addOneDislike() {
       // récupération de la bdd
-      const response = await this.showOnePost(this.id);
-      const post = response.post;
-      this.post = post;
+      const response = await this.updateLikeDislike(this.id);
+      this.post = response;
       const postId = this.id;
       // on regarde dans le localstorage
       const localParse = JSON.parse(localStorage.getItem("user"));
       const userId = localParse.userId;
       // on regarde si le user a déja like<
-      const usersLiked = response.post.likedBy.map((x) => x.userId);
-      const usersDisliked = response.post.dislikedBy.map((x) => x.userId);
+      const usersLiked = response.likedBy.map((x) => x.userId);
+      const usersDisliked = response.dislikedBy.map((x) => x.userId);
       if (usersDisliked.includes(userId)) {
         this.post.dislikes--;
         this.$store.dispatch("modulePost/likeOrDislikePost", {

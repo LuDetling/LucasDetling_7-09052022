@@ -2,9 +2,37 @@ import router from "../router/index";
 
 const modulePost = {
   namespaced: true,
+  state: {
+    setPost: null,
+  },
+  mutations: {
+    setPost(state, post) {
+      state.setPost = post;
+    },
+  },
   actions: {
     // <--------------- AFFICHER UN POST --------------->
-    async showOnePost({ rootState }, id) {
+    async showOnePost({ rootState, commit }, postId) {
+      const { token } = rootState.user;
+      const response = await fetch("http://localhost:3001/posts/" + postId, {
+        method: "GET",
+        headers: {
+          authorization: `BEARER ${token}`,
+        },
+      });
+      if (!response.ok) {
+        console.log(
+          "Network request for products.json failed with response " +
+            response.status +
+            ": " +
+            response.statusText
+        );
+      }
+      const { post } = await response.json();
+      commit("setPost", post);
+    },
+    // <--------------- UPDATE LIKE DISLIKE --------------->
+    async updateLikeDislike({ rootState }, id) {
       const { token } = rootState.user;
       const response = await fetch("http://localhost:3001/posts/" + id, {
         method: "GET",
@@ -15,12 +43,13 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
       }
-      return response.json();
+      const { post } = await response.json();
+      return post;
     },
     // <--------------- AFFICHER POSTS --------------->
     async showPosts({ rootState }) {
@@ -37,9 +66,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
       }
       const data = await response.json();
@@ -47,7 +76,7 @@ const modulePost = {
       return allPosts;
     },
     // <--------------- DELETE POST --------------->
-    async deletePost({ rootState }) {
+    async deletePost({ rootState, commit }) {
       const { token } = rootState.user;
       const id = location.href.split("/post/")[1];
       const response = await fetch("http://localhost:3001/posts/" + id, {
@@ -61,11 +90,13 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
       }
+      const post = null;
+      commit("setPost", post);
       router.push("/");
     },
     // <--------------- UPDATE POST --------------->
@@ -89,9 +120,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
         return;
       }
@@ -117,9 +148,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
         commit("setStatus", "error_create");
         return;
@@ -145,9 +176,9 @@ const modulePost = {
       if (!response.ok) {
         console.log(
           "Network request for products.json failed with response " +
-          response.status +
-          ": " +
-          response.statusText
+            response.status +
+            ": " +
+            response.statusText
         );
         return;
       }

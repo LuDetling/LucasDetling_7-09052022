@@ -20,7 +20,7 @@ import LikeDislike from "./LikeDislike.vue";
 
 export default {
   name: "userPost",
-  components: LikeDislike,
+  components: { LikeDislike },
   data: () => {
     return {
       posts: [],
@@ -32,12 +32,11 @@ export default {
       return;
     }
     const allPosts = await this.showPosts();
-    for (let i = 0; i < allPosts.length; i++) {
-      this.posts.push(allPosts[i]);
-    }
+    this.posts = allPosts;
   },
   methods: {
-    goShowOnePost(id) {
+    async goShowOnePost(id) {
+      await this.showOnePost(id);
       router.push("/post/" + id);
     },
     ...mapActions("modulePost", ["showPosts", "showOnePost"]),
@@ -45,7 +44,6 @@ export default {
   computed: {
     ...mapState(["user"]),
   },
-  components: { LikeDislike },
 };
 </script>
 
