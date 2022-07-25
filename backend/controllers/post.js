@@ -197,6 +197,7 @@ exports.likePost = async (req, res, next) => {
 
       res.status(201).json({
         message: "like +1 !",
+        post,
       });
     }
     if (like === 0) {
@@ -233,6 +234,7 @@ exports.likePost = async (req, res, next) => {
       }
       res.status(201).json({
         message: "like +0 !",
+        post,
       });
     }
     if (like === -1) {
@@ -270,6 +272,7 @@ exports.likePost = async (req, res, next) => {
       });
       res.status(201).json({
         message: "like -1 !",
+        post,
       });
     }
   } catch (error) {

@@ -1,14 +1,17 @@
 <template>
   <div class="content-post">
-    <h1 class="title">{{ setPost.title }}</h1>
-    <div class="img-like">
-      <img :src="setPost.imageUrl" alt="" class="image" />
-      <LikeDislike :id="setPost.id" />
-    </div>
-    <p class="content">{{ setPost.content }}</p>
-    <div v-if="this.user.userId === setPost.userId">
-      <button class="delete" @click="deletePost">Supprimer</button>
-      <button class="update" @click="updatePost">Modifier</button>
+    <div v-if="!post">loading...</div>
+    <div v-else>
+      <h1 class="title">{{ post.title }}</h1>
+      <div class="img-like">
+        <img :src="post.imageUrl" alt="" class="image" />
+        <LikeDislike :id="post.id" />
+      </div>
+      <p class="content">{{ post.content }}</p>
+      <div v-if="this.user.userId === post.userId">
+        <button class="delete" @click="deletePost">Supprimer</button>
+        <button class="update" @click="updatePost">Modifier</button>
+      </div>
     </div>
   </div>
 </template>
@@ -20,7 +23,6 @@ import LikeDislike from "@/components/LikeDislike.vue";
 
 export default {
   name: "postView",
-
   async created() {
     if (this.user.userId === -1) {
       router.push("/login");
@@ -38,7 +40,7 @@ export default {
 
   computed: {
     ...mapState(["user"]),
-    ...mapState("modulePost", ["setPost"]),
+    ...mapState("modulePost", ["post"]),
   },
   components: { LikeDislike },
 };

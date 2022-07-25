@@ -3,11 +3,28 @@ import router from "../router/index";
 const modulePost = {
   namespaced: true,
   state: {
-    setPost: null,
+    posts: [],
+    post: {},
+    liked: false,
+    disliked: false,
   },
   mutations: {
+    setPosts(state, posts) {
+      state.posts = posts;
+    },
     setPost(state, post) {
-      state.setPost = post;
+      state.post = post;
+    },
+    updatePost(state, post) {
+      state.posts = state.posts.map((item) => {
+        if (item.id == post.id) {
+          return post;
+        }
+        return item;
+      });
+    },
+    deletePost(state, id) {
+      state.posts = state.posts.filter((item) => item.id != id);
     },
   },
   actions: {
@@ -32,8 +49,8 @@ const modulePost = {
       commit("setPost", post);
     },
     // <--------------- UPDATE LIKE DISLIKE --------------->
-    async updateLikeDislike({ rootState }, id) {
-      const { token } = rootState.user;
+    async updateLikeDislike({ rootState, commit }, id) {
+      const { token, userId } = rootState.user;
       const response = await fetch("http://localhost:3001/posts/" + id, {
         method: "GET",
         headers: {
@@ -52,7 +69,7 @@ const modulePost = {
       return post;
     },
     // <--------------- AFFICHER POSTS --------------->
-    async showPosts({ rootState }) {
+    async showPosts({ rootState, commit }) {
       const { token } = rootState.user;
       if (rootState.user.userId === -1) {
         return;
@@ -71,9 +88,8 @@ const modulePost = {
             response.statusText
         );
       }
-      const data = await response.json();
-      const allPosts = data.posts.reverse();
-      return allPosts;
+      const { posts } = await response.json();
+      commit("setPosts", posts);
     },
     // <--------------- DELETE POST --------------->
     async deletePost({ rootState, commit }) {
@@ -95,12 +111,11 @@ const modulePost = {
             response.statusText
         );
       }
-      const post = null;
-      commit("setPost", post);
+      commit("deletePost", id);
       router.push("/");
     },
     // <--------------- UPDATE POST --------------->
-    async updatePost({ rootState }, postInfos) {
+    async updatePost({ rootState, commit }, postInfos) {
       const formData = new FormData();
       formData.append("title", postInfos.title);
       formData.append("content", postInfos.content);
@@ -126,10 +141,12 @@ const modulePost = {
         );
         return;
       }
+      const post = await response.json();
+      commit("updatePost", post);
       router.push("/post/" + id);
     },
     // <--------------- CREATE POST --------------->
-    async createPost({ commit, rootState }, postInfos) {
+    async createPost({ rootState }, postInfos) {
       const formData = new FormData();
       formData.append("title", postInfos.title);
       formData.append("content", postInfos.content);
@@ -137,7 +154,6 @@ const modulePost = {
       formData.append("image", postInfos.image);
 
       const { token } = rootState.user;
-      commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/posts", {
         method: "POST",
         headers: {
@@ -152,7 +168,6 @@ const modulePost = {
             ": " +
             response.statusText
         );
-        commit("setStatus", "error_create");
         return;
       }
       router.push("/");

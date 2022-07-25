@@ -1,6 +1,6 @@
 <template>
   <div class="content-post">
-    <div v-for="post of posts" :key="post.id" class="card-post-like">
+    <div v-for="post of this.posts" :key="post.id" class="card-post-like">
       <LikeDislike :id="post.id" />
       <div class="card-post" @click="goShowOnePost(post.id)">
         <img :src="post.imageUrl" alt="Image du post" />
@@ -21,18 +21,12 @@ import LikeDislike from "./LikeDislike.vue";
 export default {
   name: "userPost",
   components: { LikeDislike },
-  data: () => {
-    return {
-      posts: [],
-    };
-  },
   async created() {
     if (this.user.userId === -1) {
       router.push("/login");
       return;
     }
-    const allPosts = await this.showPosts();
-    this.posts = allPosts;
+    await this.showPosts();
   },
   methods: {
     async goShowOnePost(id) {
@@ -43,6 +37,7 @@ export default {
   },
   computed: {
     ...mapState(["user"]),
+    ...mapState("modulePost", ["posts"]),
   },
 };
 </script>

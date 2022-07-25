@@ -1,19 +1,11 @@
 <template>
   <div class="like-dislike">
-    <button @click="addOneLike()" class="like" :class="{ isLiked: isLiked }">
+    <button @click="addOneLike" class="like" :class="{ isLiked: isLiked }">
       <font-awesome-icon icon="fa-solid fa-thumbs-up" />
       {{ post.likes }}
     </button>
     <button
-      @click="addOneDislike()"
-      class="dislike"
-      :class="{ isDisliked: isDisliked }"
-    >
-      <font-awesome-icon icon="fa-solid fa-thumbs-down" />
-      {{ post.dislikes }}
-    </button>
-    <button
-      @click="likeDislike(this.like === 0 ? 1 : 0)"
+      @click="addOneDislike"
       class="dislike"
       :class="{ isDisliked: isDisliked }"
     >
@@ -39,35 +31,45 @@ export default {
     };
   },
   async created() {
-    const response = await this.updateLikeDislike(this.id);
-    this.post = response;
+    if (!this.id) {
+      this.post = await this.updateLikeDislike(this.$route.params.id);
+      this.haveLike();
+      return;
+    }
+    this.post = await this.updateLikeDislike(this.id);
+    this.haveLike();
   },
   computed: {
-    ...mapState("modulePost", ["setPost"]),
+    ...mapState(["user"]),
   },
   methods: {
-    ...mapActions("modulePost", ["updateLikeDislike"]),
-    // essayer de le faire pour les 2
-    async likeDislike() {
-      this.like = 1;
-      // this.$store.dispatch("modulePost/likeOrDislikePost", {
-      //   like: this.like ? 0 : 1,
-      //   postId: this.$route.params.id,
-      // });
+    ...mapActions("modulePost", ["updateLikeDislike", "showOnePost"]),
+    haveLike() {
+      if (this.post.likedBy.map((x) => x.userId).includes(this.user.userId)) {
+        this.isLiked = true;
+      } else this.isLiked = false;
+      if (
+        this.post.dislikedBy.map((x) => x.userId).includes(this.user.userId)
+      ) {
+        this.isDisliked = true;
+      } else this.isDisliked = false;
     },
     async addOneLike() {
       // récupération de la bdd
+      this.haveLike();
+
       const response = await this.updateLikeDislike(this.id);
       this.post = response;
       const postId = this.id;
       // on regarde dans le localstorage
-      const localParse = JSON.parse(localStorage.getItem("user"));
-      const userId = localParse.userId;
+      const { userId } = this.user;
       // on regarde si le user a déja like
       const usersLiked = response.likedBy.map((x) => x.userId);
       const usersDisliked = response.dislikedBy.map((x) => x.userId);
       if (usersLiked.includes(userId)) {
         this.post.likes--;
+        this.isLiked = false;
+        this.isDisliked = false;
         this.$store.dispatch("modulePost/likeOrDislikePost", {
           like: 0,
           userId: userId,
@@ -76,6 +78,8 @@ export default {
       } else if (usersDisliked.includes(userId)) {
         this.post.dislikes--;
         this.post.likes++;
+        this.isLiked = true;
+        this.isDisliked = false;
         this.$store.dispatch("modulePost/likeOrDislikePost", {
           like: 1,
           userId: userId,
@@ -83,6 +87,8 @@ export default {
         });
       } else {
         this.post.likes++;
+        this.isLiked = true;
+        this.isDisliked = false;
         this.$store.dispatch("modulePost/likeOrDislikePost", {
           like: 1,
           userId: userId,
@@ -96,13 +102,14 @@ export default {
       this.post = response;
       const postId = this.id;
       // on regarde dans le localstorage
-      const localParse = JSON.parse(localStorage.getItem("user"));
-      const userId = localParse.userId;
+      const { userId } = this.user;
       // on regarde si le user a déja like<
       const usersLiked = response.likedBy.map((x) => x.userId);
       const usersDisliked = response.dislikedBy.map((x) => x.userId);
       if (usersDisliked.includes(userId)) {
         this.post.dislikes--;
+        this.isDisliked = false;
+        this.isLiked = false;
         this.$store.dispatch("modulePost/likeOrDislikePost", {
           like: 0,
           userId: userId,
@@ -111,6 +118,8 @@ export default {
       } else if (usersLiked.includes(userId)) {
         this.post.likes--;
         this.post.dislikes++;
+        this.isDisliked = true;
+        this.isLiked = false;
         this.$store.dispatch("modulePost/likeOrDislikePost", {
           like: -1,
           userId: userId,
@@ -118,6 +127,8 @@ export default {
         });
       } else {
         this.post.dislikes++;
+        this.isDisliked = true;
+        this.isLiked = false;
         this.$store.dispatch("modulePost/likeOrDislikePost", {
           like: -1,
           userId: userId,

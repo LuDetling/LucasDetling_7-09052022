@@ -1,21 +1,21 @@
 <template>
   <div class="content-post">
-    <div v-if="!setPost">loading...</div>
+    <div v-if="!post">loading...</div>
     <div v-else>
       <InputForm
-        :placeholder="setPost.title"
+        :placeholder="post.title"
         id="title"
         label="Titre :"
         @showInput="sendTitle"
       />
       <InputForm
-        :placeholder="setPost.content"
+        :placeholder="post.content"
         id="content"
         label="Contenu :"
         @showInput="sendContent"
       />
       <InputForm label="Image :" type="file" id="image" @change="changeImage" />
-      <img :src="setPost.imageUrl" alt="" class="image" />
+      <img :src="post.imageUrl" alt="" class="image" />
       <button @click="updatePost">Modifier</button>
       <button @click="annuler">Annuler</button>
     </div>
@@ -48,26 +48,26 @@ export default {
       router.push("/post/" + this.$route.params.id);
     },
     sendTitle(payload) {
-      this.setPost.title = payload.value;
+      this.post.title = payload.value;
     },
     sendContent(payload) {
-      this.setPost.content = payload.value;
+      this.post.content = payload.value;
     },
     updatePost() {
       const user = JSON.parse(localStorage.getItem("user"));
       const userId = user.userId;
 
       this.$store.dispatch("modulePost/updatePost", {
-        title: this.setPost.title,
-        content: this.setPost.content,
+        title: this.post.title,
+        content: this.post.content,
         userId: userId,
-        image: this.setPost.image,
+        image: this.post.image,
       });
     },
   },
   computed: {
     ...mapState(["user"]),
-    ...mapState("modulePost", ["setPost"]),
+    ...mapState("modulePost", ["post"]),
   },
 };
 </script>
