@@ -10,6 +10,9 @@ exports.showPosts = async (req, res) => {
         dislikedBy: true,
         likedBy: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     res.status(200).json({ posts });
@@ -96,8 +99,9 @@ exports.updatePost = async (req, res, next) => {
         data: {
           title: title,
           content: content,
-          imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
-            }`,
+          imageUrl: `${req.protocol}://${req.get("host")}/images/${
+            req.file.filename
+          }`,
         },
       });
     }
@@ -118,8 +122,9 @@ exports.createPost = async (req, res, next) => {
     title: title,
     content: content,
     userId: Number(user),
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
-      }`,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${
+      req.file.filename
+    }`,
   };
   try {
     if (req.user.id != user) {
