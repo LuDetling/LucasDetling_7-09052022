@@ -49,8 +49,8 @@ const modulePost = {
       commit("setPost", post);
     },
     // <--------------- UPDATE LIKE DISLIKE --------------->
-    async updateLikeDislike({ rootState, commit }, id) {
-      const { token, userId } = rootState.user;
+    async updateLikeDislike({ rootState }, id) {
+      const { token } = rootState.user;
       const response = await fetch("http://localhost:3001/posts/" + id, {
         method: "GET",
         headers: {

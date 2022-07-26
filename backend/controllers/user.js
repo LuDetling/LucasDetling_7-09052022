@@ -64,6 +64,7 @@ exports.login = async (req, res, next) => {
           expiresIn: "24h",
         }
       ),
+      statut: user.statut,
     });
   } catch (error) {
     res.status(500).json({

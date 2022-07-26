@@ -4,14 +4,22 @@
     <div v-else>
       <h1 class="title">{{ post.title }}</h1>
       <div class="img-like">
-        <img :src="post.imageUrl" alt="" class="image" />
         <LikeDislike :id="post.id" />
+        <img :src="post.imageUrl" alt="" class="image" />
+        <div>
+          <div
+            v-if="
+              this.user.userId === post.userId ||
+              (this.user.statut === 'admin' && this.user.userId === 1)
+            "
+            class="update-delete"
+          >
+            <button class="update" @click="updatePost">Modifier</button>
+            <button class="delete" @click="deletePost">Supprimer</button>
+          </div>
+        </div>
       </div>
       <p class="content">{{ post.content }}</p>
-      <div v-if="this.user.userId === post.userId">
-        <button class="delete" @click="deletePost">Supprimer</button>
-        <button class="update" @click="updatePost">Modifier</button>
-      </div>
     </div>
   </div>
 </template>
@@ -51,6 +59,11 @@ export default {
 
 .content-post {
   color: $secondaire;
+  max-width: 1140px;
+  margin: auto;
+  .title::first-letter {
+    text-transform: capitalize;
+  }
   h1 {
     font-size: 2rem;
     margin-bottom: 1rem;
@@ -58,12 +71,40 @@ export default {
   .img-like {
     display: flex;
     justify-content: center;
-    margin-left: 22px;
     margin-bottom: 1rem;
     .image {
       max-width: 500px;
       max-height: 500px;
-      object-fit: cover;
+      object-fit: contain;
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+  }
+  .update-delete {
+    display: flex;
+    flex-direction: column;
+    button {
+      cursor: pointer;
+      background: none;
+      border: 2px solid $secondaire;
+      border-radius: 20px;
+      color: $secondaire;
+      font-size: 1rem;
+      transition: 0.3s;
+      padding: 0.3rem;
+      &:hover,
+      &:active,
+      &:focus {
+        background: $fonce;
+      }
+    }
+    .update {
+      margin-bottom: 0.5rem;
+    }
+  }
+  .content {
+    &::first-letter {
+      text-transform: capitalize;
     }
   }
 }

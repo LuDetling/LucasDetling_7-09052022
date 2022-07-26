@@ -1,10 +1,7 @@
-import router from "../router/index";
-
 const moduleUser = {
   actions: {
     // <--------------- CREATE ACCOUNT --------------->
-    async createAccount({ commit, dispatch }, userInfos) {
-      commit("setStatus", "loading");
+    async createAccount({ dispatch, commit }, userInfos) {
       const response = await fetch("http://localhost:3001/auth/signup", {
         method: "POST",
         headers: {
@@ -20,8 +17,7 @@ const moduleUser = {
             ": " +
             response.statusText
         );
-        commit("setStatus", "error_create");
-
+        commit("setStatus", "error_loading");
         return;
       }
       dispatch("login", userInfos);
@@ -30,7 +26,6 @@ const moduleUser = {
     // <--------------- LOGIN --------------->
 
     async login({ commit }, userInfos) {
-      commit("setStatus", "loading");
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
@@ -51,9 +46,7 @@ const moduleUser = {
       }
       const data = await response.json();
       localStorage.setItem("user", JSON.stringify(data));
-      const user = JSON.parse(localStorage.getItem("user"));
-      commit("logUser", user);
-      commit("setStatus", "loged");
+      commit("logUser", data);
     },
   },
 };

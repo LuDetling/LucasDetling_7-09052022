@@ -55,26 +55,27 @@ button {
 
 .nav {
   padding: 15px 30px;
-  background-color: $secondaire;
-  border-bottom: $primaire solid 1px;
+  background-color: $fonce;
+  box-shadow: 0px 2px 7px 0px $secondaire;
   margin-bottom: 3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
+  z-index: 1;
   a {
     font-weight: bold;
-    color: $tertiaire;
+    color: $gris;
     text-decoration: none;
     transition: 0.3s;
     width: 200px;
     &:hover {
-      color: $primaire;
+      color: $secondaire;
     }
 
     &.router-link-exact-active {
-      color: $primaire;
+      color: $secondaire;
       text-decoration: underline;
     }
   }
@@ -92,7 +93,7 @@ button {
 
     .logout {
       background: none;
-      color: $tertiaire;
+      color: $gris;
       border: none;
       cursor: pointer;
       font-size: 16px;
@@ -102,7 +103,7 @@ button {
       transition: 0.3s;
 
       &:hover {
-        color: $primaire;
+        color: $secondaire;
       }
     }
   }

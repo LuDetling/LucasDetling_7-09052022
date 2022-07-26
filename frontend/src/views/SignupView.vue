@@ -5,24 +5,35 @@
       Vous avez déjà un compte ? veuillez vous
       <a class="login" @click="letsLogin">connecter</a>
     </p>
-    <div class="formulaire">
-      <InputForm name="email" label="Email : " type="text" :error="errorEmail" @showInput="sendEmail" />
-      <InputForm name="password" label="Mot de passe : " type="password" :error="errorPassword"
-        @showInput="sendPassword" />
-    </div>
-    <button v-if="status === ''" @click="validatedFields">S'inscrire</button>
-    <button v-else-if="status === 'loading'">
-      Inscription en cours...
-    </button>
-    <div v-else>
-      <button @click="validatedFields">Inscription</button>
-      <div>Email déjà utilisé</div>
-    </div>
+    <form action="">
+      <div class="formulaire">
+        <InputForm
+          name="email"
+          label="Email : "
+          type="text"
+          :error="errorEmail"
+          @showInput="sendEmail"
+        />
+        <InputForm
+          name="password"
+          label="Mot de passe : "
+          type="password"
+          :error="errorPassword"
+          @showInput="sendPassword"
+        />
+      </div>
+      <button v-if="status === ''" @click="validatedFields">S'inscrire</button>
+      <button v-else-if="status === 'loading'">Inscription en cours...</button>
+      <div v-else>
+        <button @click="validatedFields">Inscription</button>
+        <div class="failed">Email déjà utilisé</div>
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import InputForm from "../components/InputForm.vue";
 import router from "@/router";
 
@@ -42,12 +53,16 @@ export default {
       errorPassword: "",
     };
   },
+  created() {
+    this.resetStatus();
+  },
   mounted() {
     if (this.user.userId != -1) {
       router.push("/");
     }
   },
   methods: {
+    ...mapActions(["resetStatus"]),
     sendEmail(payload) {
       this.email = payload.value;
     },
@@ -64,6 +79,7 @@ export default {
       this.$router.push("/login");
     },
     validatedFields() {
+      this.resetStatus();
       if (
         regexEmail.test(this.email) != true &&
         regexPassword.test(this.password) != true
@@ -95,14 +111,14 @@ export default {
 <style lang="scss" scoped>
 @import "../assets/styles/styles.scss";
 .login-create {
-  color: white;
+  color: $secondaire;
 
-  >h1 {
+  > h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
   }
 
-  >p {
+  > p {
     font-size: 1.2rem;
     margin-bottom: 2rem;
 
@@ -110,22 +126,25 @@ export default {
       text-decoration: underline;
       cursor: pointer;
     }
-
   }
 
   button {
-    background-color: white;
-    color: $tertiaire;
+    background: none;
+    color: $secondaire;
     font-size: 1rem;
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
     border-radius: 20px;
     cursor: pointer;
+    outline: 2px solid $secondaire;
     border: none;
-
+    transition: 0.3s;
     &:focus-visible,
     &:hover {
-      outline: 3px solid green;
+      background: $fonce;
     }
+  }
+  .failed {
+    margin-top: 1rem;
   }
 }
 </style>

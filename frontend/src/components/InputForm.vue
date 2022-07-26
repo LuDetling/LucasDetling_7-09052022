@@ -62,17 +62,12 @@ export default {
     padding: 0.5rem;
     border: none;
     border-radius: 20px;
-
-    &:focus-visible,
-    &:hover {
-      outline: 3px solid green;
-    }
   }
 
   .error {
-    margin-top: 0.5rem;
+    margin: 0.5rem 0;
     font-size: 1rem;
-    color: red;
+    color: yellow;
   }
 }
 </style>

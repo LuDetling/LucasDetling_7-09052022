@@ -46,17 +46,19 @@ export default {
 @import "../assets/styles/styles.scss";
 .card-post-like:hover {
   transform: scale(1.02);
+  border-radius: 0;
 }
 .card-post-like {
   display: flex;
   margin: auto;
   width: 600px;
-  padding: 0.5rem;
-  background: $secondaire;
+  padding: 1rem;
+  background: $fonce;
   margin-bottom: 2rem;
   transition: 0.2s;
+  border-radius: 10px;
   .like-dislike {
-    border-right: 1px solid $tertiaire;
+    border-right: 1px solid $secondaire;
     padding-right: 0.5rem;
     button {
       display: block;
@@ -69,27 +71,34 @@ export default {
     cursor: pointer;
     img {
       width: 150px;
+      min-width: 150px;
       height: 150px;
       object-fit: cover;
       padding: 0 0.5rem;
-      border-right: 1px solid $tertiaire;
+      border-right: 1px solid $secondaire;
     }
     .post {
       padding-left: 0.5rem;
       flex-grow: 2;
       h1 {
         margin: 0;
-        color: $tertiaire;
+        color: $secondaire;
         text-align: start;
         font-size: 1.7rem;
         margin-bottom: 0.8rem;
         padding-bottom: 0.2rem;
-        border-bottom: 1px solid $tertiaire;
+        border-bottom: 1px solid $secondaire;
+        &::first-letter {
+          text-transform: capitalize;
+        }
       }
       p {
-        color: $tertiaire;
+        color: $secondaire;
         margin: 0;
         text-align: start;
+        &::first-letter {
+          text-transform: capitalize;
+        }
       }
     }
   }

@@ -28,11 +28,23 @@ export default createStore({
     },
     logUser(state, user) {
       state.user = user;
+      const oneDaySeconds = 1000 * 60 * 60 * 24;
+      setTimeout(() => {
+        localStorage.removeItem("user");
+        state.user = defaultUser;
+        state.status = "";
+        router.push("/login");
+      }, oneDaySeconds);
       router.push("/");
     },
     logout(state) {
       localStorage.removeItem("user");
       state.user = defaultUser;
+      state.status = "";
+    },
+  },
+  actions: {
+    resetStatus({ state }) {
       state.status = "";
     },
   },

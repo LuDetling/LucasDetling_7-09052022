@@ -1,24 +1,41 @@
 <template>
   <div class="content-post">
     <div v-if="!post">loading...</div>
-    <div v-else>
-      <InputForm
-        :placeholder="post.title"
-        id="title"
-        label="Titre :"
-        @showInput="sendTitle"
-      />
-      <InputForm
-        :placeholder="post.content"
-        id="content"
-        label="Contenu :"
-        @showInput="sendContent"
-      />
-      <InputForm label="Image :" type="file" id="image" @change="changeImage" />
-      <img :src="post.imageUrl" alt="" class="image" />
-      <button @click="updatePost">Modifier</button>
-      <button @click="annuler">Annuler</button>
+    <div class="modify-content">
+      <div class="image-left">
+        <img :src="post.imageUrl" alt="" class="image" />
+      </div>
+      <div class="input-right">
+        <InputForm
+          :placeholder="post.title"
+          id="title"
+          label="Titre :"
+          @showInput="sendTitle"
+          :error="errorTitle"
+        />
+        <div class="label-content">
+          <label for="">Contenu :</label>
+          <textarea
+            name="content"
+            id="content"
+            rows="10"
+            v-model="content"
+            :placeholder="post.content"
+            maxlength="191"
+          ></textarea>
+          <div class="error">{{ errorContent }}</div>
+        </div>
+        <InputForm
+          label="Image :"
+          type="file"
+          id="image"
+          @change="changeImage"
+        />
+      </div>
     </div>
+
+    <button @click="validateFields" class="update">Modifier</button>
+    <button @click="annuler">Annuler</button>
   </div>
 </template>
 
@@ -29,6 +46,13 @@ import { mapActions, mapState } from "vuex";
 
 export default {
   components: { InputForm },
+  data: () => {
+    return {
+      content: "",
+      errorTitle: "",
+      errorContent: "",
+    };
+  },
   async created() {
     if (this.user.userId === -1) {
       router.push("/login");
@@ -53,13 +77,33 @@ export default {
     sendContent(payload) {
       this.post.content = payload.value;
     },
+    validateFields() {
+      if (this.post.title.length < 5 && this.content.length < 20) {
+        this.errorTitle = "Titre trop court !";
+        this.errorContent = "Content trop court !";
+        return false;
+      } else if (this.post.title.length < 5) {
+        this.errorTitle = "Titre trop court !";
+        this.errorContent = "";
+        return false;
+      } else if (this.content.length < 20) {
+        this.errorContent = "Content trop court !";
+        this.errorTitle = "";
+        return false;
+      } else {
+        this.errorContent = "";
+        this.errorTitle = "";
+        this.updatePost();
+        return true;
+      }
+    },
     updatePost() {
       const user = JSON.parse(localStorage.getItem("user"));
       const userId = user.userId;
 
       this.$store.dispatch("modulePost/updatePost", {
         title: this.post.title,
-        content: this.post.content,
+        content: this.content,
         userId: userId,
         image: this.post.image,
       });
@@ -76,36 +120,57 @@ export default {
 @import "../assets/styles/styles.scss";
 .content-post {
   color: $secondaire;
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-  .img-like {
+  .modify-content {
     display: flex;
     justify-content: center;
-    margin-left: 22px;
-    margin-bottom: 1rem;
-    .like {
-      div {
-        margin-bottom: 0.5rem;
-        cursor: pointer;
-        font-size: 1.2rem;
-        display: flex;
-        svg {
-          margin-left: 0.5rem;
-          transform: rotateY(180deg);
-          margin-right: 0.3rem;
-          font-size: 1.5rem;
-          position: relative;
-        }
-        .fa-thumbs-up {
-          top: -5px;
-        }
-        .fa-thumbs-down {
-          top: 2px;
-        }
+    .image-left {
+      margin-right: 2rem;
+      .image {
+        width: 300px;
       }
     }
+    .input-right {
+      .input-form {
+        margin: 0;
+      }
+      .label-content {
+        width: 300px;
+        margin: auto;
+        textarea {
+          width: 100%;
+        }
+      }
+      label {
+        display: block;
+        text-align: start;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+      .error {
+        margin: .5rem 0;
+        color: yellow;
+        text-align: start;
+      }
+    }
+  }
+  > button {
+    margin-top: 2rem;
+    background: none;
+    color: $secondaire;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    outline: 2px solid $secondaire;
+    border: none;
+    transition: 0.3s;
+    &:focus-visible,
+    &:hover {
+      background: $fonce;
+    }
+  }
+  .update {
+    margin-right: 1rem;
   }
 }
 </style>

@@ -144,18 +144,19 @@ export default {
 @import "../assets/styles/styles.scss";
 
 .like-dislike {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   button {
     margin-bottom: 0.5rem;
     padding: 0;
     background: none;
     border: none;
-    color: white;
+    color: $secondaire;
     cursor: pointer;
     font-size: 1.2rem;
     display: flex;
     svg {
-      margin-left: 0.5rem;
-      margin-right: 0.3rem;
       font-size: 1.5rem;
       position: relative;
     }
