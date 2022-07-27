@@ -39,7 +39,6 @@ Dans le terminal Windows / se placer dans le dossier cloné
 
 ```bash
   npm i
-  nodemon server
 ```
 
 #### Installation de la base de donnée
@@ -52,6 +51,12 @@ Dans le terminal Windows / se placer dans le dossier cloné
 
 ```bash
   DATABASE_URL=mysql://USER:PASSWORD@HOST:PORT/DATABASE
+```
+
+### Lancement du serveur
+
+```bash
+  nodemon server
 ```
 
 ### Frontend
