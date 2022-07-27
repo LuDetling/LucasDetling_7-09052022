@@ -38,7 +38,7 @@ Dans le terminal Windows / se placer dans le dossier cloné
 #### Installation de la base de donnée
 
 ```bash
-  prisma migrate dev --name init
+  npx prisma migrate dev --name init
 ```
 
 
