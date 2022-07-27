@@ -102,5 +102,11 @@ export default {
       }
     }
   }
+  @media screen and (max-width: 612px) {
+    width: 300px;
+    .card-post {
+      flex-direction: column;
+    }
+  }
 }
 </style>

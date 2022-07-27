@@ -72,12 +72,16 @@ export default {
     display: flex;
     justify-content: center;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
     .image {
       max-width: 500px;
       max-height: 500px;
       object-fit: contain;
       margin-left: 1rem;
       margin-right: 1rem;
+      @media screen and(max-width: 600px) {
+        max-width: 250px;
+      }
     }
   }
   .update-delete {
@@ -100,6 +104,9 @@ export default {
     }
     .update {
       margin-bottom: 0.5rem;
+    }
+    @media screen and(max-width: 404px) {
+      margin-top: 1rem;
     }
   }
   .content {

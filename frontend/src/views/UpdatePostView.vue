@@ -123,6 +123,7 @@ export default {
   .modify-content {
     display: flex;
     justify-content: center;
+
     .image-left {
       margin-right: 2rem;
       .image {
@@ -147,9 +148,23 @@ export default {
         margin-bottom: 0.5rem;
       }
       .error {
-        margin: .5rem 0;
+        margin: 0.5rem 0;
         color: yellow;
         text-align: start;
+      }
+    }
+    @media screen and (max-width: 640px) {
+      flex-direction: column;
+      .image-left {
+        margin: auto;
+        .image {
+          margin-bottom: 1rem;
+        }
+      }
+      .input-right {
+        .input-form {
+          margin: auto;
+        }
       }
     }
   }

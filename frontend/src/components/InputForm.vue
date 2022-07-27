@@ -62,6 +62,9 @@ export default {
     padding: 0.5rem;
     border: none;
     border-radius: 20px;
+    @media screen and(max-width: 400px) {
+      width: 250px;
+    }
   }
 
   .error {

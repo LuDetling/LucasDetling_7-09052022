@@ -160,6 +160,7 @@ export default {
   }
   textarea {
     margin-bottom: .5rem;
+    max-width: 300px;
   }
 
   label {

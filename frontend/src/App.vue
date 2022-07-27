@@ -1,20 +1,30 @@
 <template>
-  <nav class="nav">
-    <router-link to="/" class="accueil">Accueil</router-link>
-    <router-link v-if="user.userId != -1" to="/newPost"
-      >Nouveau post</router-link
-    >
-    <div class="log">
-      <router-link v-if="user.userId === -1" to="/login"
-        >Se connecter</router-link
+  <div>
+    <nav class="nav">
+      <router-link to="/" class="accueil"
+        ><img
+          src="./assets/icon-left-font-monochrome-white.svg"
+          alt="Logo groupomania"
+          class="logo"
+      /></router-link>
+      <router-link v-if="user.userId != -1" to="/newPost"
+        >Nouveau post</router-link
       >
-      <button v-else @click="lougout" class="logout">Se déconnecter</button>
-      <router-link v-if="user.userId === -1" to="/signup"
-        >S'inscrire</router-link
-      >
-    </div>
-  </nav>
-  <router-view />
+      <div class="log">
+        <router-link v-if="user.userId === -1" to="/login"
+          >Se connecter</router-link
+        >
+        <button v-else @click="lougout" class="logout">Se déconnecter</button>
+        <router-link v-if="user.userId === -1" to="/signup"
+          >S'inscrire</router-link
+        >
+      </div>
+    </nav>
+    <router-view />
+    <footer class="footer">
+      Copyright © 2022 groupomania. All Rights Reserved
+    </footer>
+  </div>
 </template>
 
 <script>
@@ -59,17 +69,21 @@ button {
   box-shadow: 0px 2px 7px 0px $secondaire;
   margin-bottom: 3rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 1;
+  flex-wrap: wrap;
   a {
     font-weight: bold;
-    color: $gris;
+    color: white;
     text-decoration: none;
     transition: 0.3s;
     width: 200px;
+    @media screen and (max-width: 659px) {
+      margin-bottom: 0.5rem;
+    }
     &:hover {
       color: $secondaire;
     }
@@ -79,21 +93,27 @@ button {
       text-decoration: underline;
     }
   }
-
-  .log {
+  .logo {
     width: 200px;
+    @media screen and (max-width: 612px) {
+      width: 150px;
+    }
+  }
+  .log {
     a {
       display: block;
       text-align: start;
-
+      width: fit-content;
       &:first-child {
         margin-bottom: 0.5rem;
       }
     }
 
     .logout {
+      width: 200px;
+
       background: none;
-      color: $gris;
+      color: white;
       border: none;
       cursor: pointer;
       font-size: 16px;
@@ -107,5 +127,11 @@ button {
       }
     }
   }
+}
+.footer {
+  margin-top: 5rem;
+  color: white;
+  padding: 1rem;
+  display: block;
 }
 </style>
