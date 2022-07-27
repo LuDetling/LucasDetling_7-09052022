@@ -35,25 +35,23 @@ Dans le terminal Windows / se placer dans le dossier cloné
   cd .\backend\
 ```
 
+#### Installation des packages
+
+```bash
+  npm i
+  nodemon server
+```
+
 #### Installation de la base de donnée
 
 ```bash
   npx prisma migrate dev --name init
 ```
 
-
-
 #### Création d'un fichier .env
 
 ```bash
   DATABASE_URL=mysql://USER:PASSWORD@HOST:PORT/DATABASE
-```
-
-#### Installation des packages
-
-```bash
-  npm i
-  nodemon server
 ```
 
 ### Frontend
